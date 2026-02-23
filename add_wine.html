@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Wine — Dan's Cellar</title>
+<style>
+  :root {
+    --bg:#0f0a0a; --surface:#1c1210; --surface2:#261815;
+    --border:#4a2e28; --burgundy:#722f37; --gold:#c9a84c;
+    --cream:#f5e6cc; --text:#f0e6d8; --muted:#9e8070;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:Georgia,serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  header {
+    background:linear-gradient(135deg,#1c0a0a,#2c1010,#1c0a0a);
+    border-bottom:2px solid var(--burgundy);
+    padding:1rem 2rem;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  header h1 { color:var(--gold); font-size:1.3rem; font-weight:normal; }
+  header a  { color:var(--muted); font-size:.85rem; text-decoration:none; }
+  header a:hover { color:var(--cream); }
+  .wrap { max-width:700px; margin:2rem auto; padding:0 1.5rem 3rem; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:2rem; }
+  .card h2 { color:var(--gold); margin-bottom:1.5rem; font-weight:normal; font-size:1.2rem; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .field { margin-bottom:1rem; }
+  .field label { display:block; font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:.35rem; }
+  .field input, .field select, .field textarea {
+    width:100%; background:var(--surface2); border:1px solid var(--border);
+    color:var(--text); padding:.6rem .75rem; border-radius:6px;
+    font-size:.95rem; font-family:Georgia,serif; outline:none;
+    transition:border-color .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--gold); }
+  .field textarea { resize:vertical; min-height:80px; }
+  .field select option { background:var(--surface2); }
+  .status-row { display:flex; gap:.75rem; }
+  .status-btn {
+    flex:1; padding:.6rem; border-radius:6px; border:1px solid var(--border);
+    background:var(--surface2); color:var(--muted); cursor:pointer; text-align:center;
+    font-family:Georgia,serif; font-size:.85rem; transition:all .2s;
+  }
+  .status-btn[data-val="Drink Now"].active { background:rgba(255,107,107,.2); border-color:#ff6b6b; color:#ff6b6b; }
+  .status-btn[data-val="Peak"].active      { background:rgba(240,192,80,.2);  border-color:#f0c050; color:#f0c050; }
+  .status-btn[data-val="Hold"].active      { background:rgba(106,171,255,.2); border-color:#6aabff; color:#6aabff; }
+  .divider { border:none; border-top:1px solid var(--border); margin:1.5rem 0; }
+  .btn-row { display:flex; gap:1rem; margin-top:1.5rem; }
+  .btn {
+    padding:.8rem 1.8rem; border-radius:8px; border:none; cursor:pointer;
+    font-family:Georgia,serif; font-size:1rem; transition:background .2s;
+  }
+  .btn-primary { background:var(--burgundy); color:var(--cream); flex:1; }
+  .btn-primary:hover { background:#9c3f4a; }
+  .btn-primary:disabled { background:#333; cursor:not-allowed; }
+  .btn-secondary { background:var(--surface2); color:var(--muted); border:1px solid var(--border); }
+  #msg { margin-top:1rem; padding:.75rem 1rem; border-radius:6px; display:none; font-size:.9rem; }
+  #msg.ok  { background:rgba(106,255,158,.1); border:1px solid rgba(106,255,158,.3); color:#6aff9e; }
+  #msg.err { background:rgba(255,107,107,.1); border:1px solid rgba(255,107,107,.3); color:#ff6b6b; }
+  .prefill-bar { background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.25); border-radius:8px; padding:1rem; margin-bottom:1.5rem; font-size:.85rem; color:var(--muted); }
+  .prefill-bar strong { color:var(--gold); }
+</style>
+</head>
+<body>
+<header>
+  <h1>🍷 Add Wine to Cellar</h1>
+  <a href="index.html">← Back to Cellar</a>
+</header>
+
+<div class="wrap">
+
+  <!-- Shown when URL has prefill params (Claude-generated link) -->
+  <div class="prefill-bar" id="prefill-notice" style="display:none">
+    <strong>Auto-filled by Claude</strong> — Review the details below and click Add to Cellar.
+  </div>
+
+  <div class="card">
+    <h2>Wine Details</h2>
+    <div class="grid2">
+      <div class="field" style="grid-column:1/-1">
+        <label>Wine Name *</label>
+        <input type="text" id="f-name" placeholder="e.g. Stag's Leap Cabernet Sauvignon">
+      </div>
+      <div class="field">
+        <label>Producer / Winery *</label>
+        <input type="text" id="f-producer" placeholder="e.g. Stag's Leap Wine Cellars">
+      </div>
+      <div class="field">
+        <label>Vintage</label>
+        <input type="text" id="f-vintage" placeholder="e.g. 2021 or NV">
+      </div>
+      <div class="field">
+        <label>Variety / Grape</label>
+        <input type="text" id="f-variety" placeholder="e.g. Cabernet Sauvignon">
+      </div>
+      <div class="field">
+        <label>Region / AVA</label>
+        <input type="text" id="f-region" placeholder="e.g. Stags Leap District, Napa Valley">
+      </div>
+      <div class="field">
+        <label>Country</label>
+        <input type="text" id="f-country" placeholder="e.g. USA">
+      </div>
+      <div class="field">
+        <label>Classification</label>
+        <input type="text" id="f-classification" placeholder="e.g. DOC, Gran Reserva, Estate">
+      </div>
+    </div>
+
+    <hr class="divider">
+    <h2>Value & Drinking Window</h2>
+    <div class="grid2">
+      <div class="field">
+        <label>Value Low ($)</label>
+        <input type="number" id="f-val-low" placeholder="e.g. 45" min="0">
+      </div>
+      <div class="field">
+        <label>Value High ($)</label>
+        <input type="number" id="f-val-high" placeholder="e.g. 70" min="0">
+      </div>
+      <div class="field">
+        <label>Drink From</label>
+        <input type="text" id="f-drink-from" placeholder="e.g. 2026 or Now">
+      </div>
+      <div class="field">
+        <label>Drink By</label>
+        <input type="text" id="f-drink-by" placeholder="e.g. 2032">
+      </div>
+    </div>
+
+    <hr class="divider">
+    <h2>Status</h2>
+    <div class="status-row" id="status-row">
+      <div class="status-btn" data-val="Drink Now" onclick="setStatus(this)">🔴 Drink Now</div>
+      <div class="status-btn active" data-val="Hold" onclick="setStatus(this)">🔵 Hold</div>
+      <div class="status-btn" data-val="Peak" onclick="setStatus(this)">🟡 Peak</div>
+    </div>
+
+    <div class="field" style="margin-top:1rem">
+      <label>Notes</label>
+      <textarea id="f-notes" placeholder="Tasting notes, cellar recommendations…"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="clearForm()">Clear</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitWine()">Add to Cellar</button>
+    </div>
+    <div id="msg"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBhmmAgAuBZ4mqjEr5CTolfbrPqK36s-aY",
+  authDomain: "dans-wine-cellar.firebaseapp.com",
+  projectId: "dans-wine-cellar",
+  storageBucket: "dans-wine-cellar.firebasestorage.app",
+  messagingSenderId: "30676784937",
+  appId: "1:30676784937:web:a66f880457ce864de90938"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// Auto-fill from URL params (Claude generates these)
+const params = new URLSearchParams(window.location.search);
+const fields = ['name','producer','vintage','variety','region','country',
+                'classification','val-low','val-high','drink-from','drink-by','notes','status'];
+let prefilled = false;
+fields.forEach(f => {
+  const val = params.get(f);
+  if (val) {
+    const el = document.getElementById('f-' + f);
+    if (el) { el.value = val; prefilled = true; }
+    if (f === 'status') {
+      document.querySelectorAll('.status-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.val === val);
+      });
+    }
+  }
+});
+if (prefilled) document.getElementById('prefill-notice').style.display = 'block';
+
+window.setStatus = function(el) {
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+};
+
+window.clearForm = function() {
+  fields.forEach(f => {
+    const el = document.getElementById('f-' + f);
+    if (el) el.value = '';
+  });
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-val="Hold"]').classList.add('active');
+  document.getElementById('msg').style.display = 'none';
+};
+
+window.submitWine = async function() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { showMsg('Wine name is required.', 'err'); return; }
+
+  const statusEl = document.querySelector('.status-btn.active');
+  const valLow   = parseFloat(document.getElementById('f-val-low').value)  || 0;
+  const valHigh  = parseFloat(document.getElementById('f-val-high').value) || 0;
+
+  const wine = {
+    name,
+    producer:       document.getElementById('f-producer').value.trim(),
+    vintage:        document.getElementById('f-vintage').value.trim(),
+    variety:        document.getElementById('f-variety').value.trim(),
+    region:         document.getElementById('f-region').value.trim(),
+    country:        document.getElementById('f-country').value.trim(),
+    classification: document.getElementById('f-classification').value.trim(),
+    value_low:      valLow,
+    value_high:     valHigh,
+    value_mid:      valLow && valHigh ? (valLow + valHigh) / 2 : valLow || valHigh,
+    drink_from:     document.getElementById('f-drink-from').value.trim(),
+    drink_by:       document.getElementById('f-drink-by').value.trim(),
+    status:         statusEl ? statusEl.dataset.val : 'Hold',
+    notes:          document.getElementById('f-notes').value.trim(),
+    quantity:       1,
+    added_date:     new Date().toISOString().slice(0,10),
+    last_updated:   new Date().toISOString().slice(0,10),
+  };
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Adding…';
+
+  try {
+    const docRef = await addDoc(collection(db, 'wines'), wine);
+    showMsg(`✅ "${name}" added to your cellar! <a href="index.html" style="color:#c9a84c">→ View Cellar</a>`, 'ok');
+    clearForm();
+  } catch(e) {
+    showMsg(`❌ Error: ${e.message}`, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Add to Cellar';
+  }
+};
+
+function showMsg(html, type) {
+  const el = document.getElementById('msg');
+  el.className = type; el.innerHTML = html; el.style.display = 'block';
+}
+</script>
+</body>
+</html>

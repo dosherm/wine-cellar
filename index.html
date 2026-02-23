@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dan's Wine Cellar</title>
+<style>
+  :root {
+    --bg: #0f0a0a;
+    --surface: #1c1210;
+    --surface2: #261815;
+    --card: #2a1c19;
+    --border: #4a2e28;
+    --burgundy: #722f37;
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --cream: #f5e6cc;
+    --text: #f0e6d8;
+    --muted: #9e8070;
+    --drink-now-bg: #3d1515;
+    --drink-now: #ff6b6b;
+    --peak-bg: #2d2510;
+    --peak: #f0c050;
+    --hold-bg: #0f1e35;
+    --hold: #6aabff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ─── TOP BAR ─── */
+  header {
+    background: linear-gradient(135deg, #1c0a0a 0%, #2c1010 50%, #1c0a0a 100%);
+    border-bottom: 2px solid var(--burgundy);
+    padding: 0 2rem;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  }
+  .header-inner { max-width: 1400px; margin: auto; display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 1rem; }
+  .logo { display: flex; align-items: center; gap: .7rem; }
+  .logo-icon { font-size: 1.8rem; }
+  .logo-text h1 { font-size: 1.3rem; font-weight: normal; color: var(--gold); letter-spacing: 1px; }
+  .logo-text p  { font-size: .75rem; color: var(--muted); font-style: italic; }
+  .header-stats { display: flex; gap: 1.5rem; }
+  .stat { text-align: center; }
+  .stat .val { font-size: 1.3rem; font-weight: bold; color: var(--gold); }
+  .stat .lbl { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ─── CONTROLS ─── */
+  .controls {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .9rem 2rem;
+    position: sticky; top: 68px; z-index: 99;
+  }
+  .controls-inner { max-width: 1400px; margin: auto; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 320px; }
+  .search-wrap input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); padding: .55rem .55rem .55rem 2.2rem;
+    border-radius: 6px; font-size: .9rem; outline: none;
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: var(--gold); }
+  .search-wrap .s-icon { position: absolute; left: .6rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .9rem; }
+  .filter-chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .chip {
+    padding: .35rem .9rem; border-radius: 20px; font-size: .8rem;
+    cursor: pointer; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--muted);
+    transition: all .2s; user-select: none;
+    font-family: 'Georgia', serif;
+  }
+  .chip.active, .chip:hover { color: var(--text); border-color: var(--gold); background: rgba(201,168,76,.12); }
+  .chip[data-status="Drink Now"].active { background: rgba(255,107,107,.15); border-color: var(--drink-now); color: var(--drink-now); }
+  .chip[data-status="Peak"].active      { background: rgba(240,192,80,.15); border-color: var(--peak); color: var(--peak); }
+  .chip[data-status="Hold"].active      { background: rgba(106,171,255,.15); border-color: var(--hold); color: var(--hold); }
+  .sort-wrap { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
+  .sort-wrap label { font-size: .8rem; color: var(--muted); }
+  .sort-wrap select {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); padding: .45rem .7rem;
+    border-radius: 6px; font-size: .85rem; outline: none; cursor: pointer;
+    font-family: 'Georgia', serif;
+  }
+
+  /* ─── GRID ─── */
+  main { max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+  .grid-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .grid-info p { font-size: .85rem; color: var(--muted); font-style: italic; }
+  #wine-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.2rem;
+  }
+
+  /* ─── CARD ─── */
+  .wine-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+    cursor: default;
+    display: flex; flex-direction: column;
+  }
+  .wine-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.5); border-color: var(--gold); }
+  .card-top { height: 5px; }
+  .card-top.drink-now { background: linear-gradient(90deg, #c0392b, #ff6b6b); }
+  .card-top.peak      { background: linear-gradient(90deg, #b8860b, #f0c050); }
+  .card-top.hold      { background: linear-gradient(90deg, #1a5276, #6aabff); }
+  .card-body { padding: 1.1rem 1.2rem 1rem; flex: 1; display: flex; flex-direction: column; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .6rem; gap: .5rem; }
+  .wine-name { font-size: 1.0rem; color: var(--cream); line-height: 1.3; flex: 1; }
+  .status-badge {
+    padding: .2rem .6rem; border-radius: 10px; font-size: .7rem;
+    font-weight: bold; white-space: nowrap; flex-shrink: 0;
+    font-family: 'Georgia', serif; letter-spacing: .5px;
+  }
+  .status-badge.drink-now { background: rgba(255,107,107,.2); color: var(--drink-now); border: 1px solid rgba(255,107,107,.4); }
+  .status-badge.peak      { background: rgba(240,192,80,.2);  color: var(--peak);      border: 1px solid rgba(240,192,80,.4); }
+  .status-badge.hold      { background: rgba(106,171,255,.2); color: var(--hold);      border: 1px solid rgba(106,171,255,.4); }
+  .producer { font-size: .8rem; color: var(--muted); margin-bottom: .8rem; font-style: italic; }
+  .meta-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .7rem; }
+  .meta-tag {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 4px; padding: .2rem .5rem;
+    font-size: .75rem; color: var(--muted);
+  }
+  .meta-tag strong { color: var(--text); }
+  .card-divider { border: none; border-top: 1px solid var(--border); margin: .7rem 0; }
+  .card-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+  .value-block .label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .value-block .amount { font-size: 1.1rem; color: var(--gold); font-weight: bold; }
+  .value-block .range  { font-size: .72rem; color: var(--muted); }
+  .drink-block { text-align: right; }
+  .drink-block .label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .drink-block .window { font-size: .85rem; color: var(--cream); }
+  .drink-block .window.urgent { color: var(--drink-now); font-weight: bold; }
+  .notes-row { margin-top: .7rem; font-size: .78rem; color: var(--muted); font-style: italic; line-height: 1.4; }
+  .classification { display: inline-block; background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.3); color: var(--gold); border-radius: 4px; padding: .15rem .4rem; font-size: .7rem; margin-left: .4rem; }
+
+  /* ─── LOADING / EMPTY ─── */
+  #loading { text-align: center; padding: 4rem; color: var(--muted); }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #empty-msg { display: none; text-align: center; padding: 4rem; color: var(--muted); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .header-stats { display: none; }
+    .controls-inner { gap: .6rem; }
+    .sort-wrap { margin-left: 0; }
+    main { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🍷</div>
+      <div class="logo-text">
+        <h1>Dan's Wine Cellar</h1>
+        <p>Personal Collection</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat"><div class="val" id="stat-total">—</div><div class="lbl">Bottles</div></div>
+      <div class="stat"><div class="val" id="stat-drink-now">—</div><div class="lbl">Drink Now</div></div>
+      <div class="stat"><div class="val" id="stat-value">—</div><div class="lbl">Est. Value</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="search-wrap">
+      <span class="s-icon">🔍</span>
+      <input type="text" id="search" placeholder="Search wine, region, variety…">
+    </div>
+    <div class="filter-chips">
+      <div class="chip active" data-status="All">All</div>
+      <div class="chip" data-status="Drink Now">🔴 Drink Now</div>
+      <div class="chip" data-status="Peak">🟡 Peak</div>
+      <div class="chip" data-status="Hold">🔵 Hold</div>
+    </div>
+    <div class="sort-wrap">
+      <label for="sort-select">Sort:</label>
+      <select id="sort-select">
+        <option value="urgency">Drink Urgency</option>
+        <option value="value-desc">Value: High → Low</option>
+        <option value="value-asc">Value: Low → High</option>
+        <option value="vintage-asc">Vintage: Oldest First</option>
+        <option value="vintage-desc">Vintage: Newest First</option>
+        <option value="name">Name A → Z</option>
+        <option value="country">Country</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="grid-info">
+    <p id="grid-label">Loading cellar…</p>
+  </div>
+  <div id="loading"><div class="spinner"></div><p>Loading your cellar…</p></div>
+  <div id="empty-msg">🍾 No wines match your filter.</div>
+  <div id="wine-grid"></div>
+</main>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBhmmAgAuBZ4mqjEr5CTolfbrPqK36s-aY",
+  authDomain: "dans-wine-cellar.firebaseapp.com",
+  projectId: "dans-wine-cellar",
+  storageBucket: "dans-wine-cellar.firebasestorage.app",
+  messagingSenderId: "30676784937",
+  appId: "1:30676784937:web:a66f880457ce864de90938"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+let allWines = [];
+let activeFilter = 'All';
+let activeSort   = 'urgency';
+let searchQuery  = '';
+
+// ── Load from Firestore ──────────────────────────────────────────────────────
+async function loadWines() {
+  try {
+    const snap = await getDocs(collection(db, 'wines'));
+    allWines = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('loading').style.display = 'none';
+    updateStats();
+    renderGrid();
+  } catch (e) {
+    document.getElementById('loading').innerHTML =
+      `<p style="color:#ff6b6b">⚠ Could not load cellar: ${e.message}</p>
+       <p style="color:var(--muted);margin-top:.5rem;font-size:.85rem">Make sure Firestore is seeded and rules allow reads.</p>`;
+  }
+}
+
+// ── Stats ────────────────────────────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('stat-total').textContent = allWines.length;
+  const drinkNow = allWines.filter(w => w.status === 'Drink Now').length;
+  document.getElementById('stat-drink-now').textContent = drinkNow;
+  const totalMid = allWines.reduce((s, w) => s + (w.value_mid || 0), 0);
+  document.getElementById('stat-value').textContent = '$' + Math.round(totalMid).toLocaleString();
+}
+
+// ── Filter + Sort ────────────────────────────────────────────────────────────
+const STATUS_ORDER = { 'Drink Now': 0, 'Peak': 1, 'Hold': 2 };
+
+function getFiltered() {
+  let wines = [...allWines];
+  if (activeFilter !== 'All') wines = wines.filter(w => w.status === activeFilter);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    wines = wines.filter(w =>
+      [w.name, w.producer, w.variety, w.region, w.country, w.classification]
+        .some(f => f && f.toLowerCase().includes(q))
+    );
+  }
+  wines.sort((a, b) => {
+    switch (activeSort) {
+      case 'urgency':      return (STATUS_ORDER[a.status] ?? 9) - (STATUS_ORDER[b.status] ?? 9);
+      case 'value-desc':   return (b.value_mid || 0) - (a.value_mid || 0);
+      case 'value-asc':    return (a.value_mid || 0) - (b.value_mid || 0);
+      case 'vintage-asc':  return (parseInt(a.vintage) || 9999) - (parseInt(b.vintage) || 9999);
+      case 'vintage-desc': return (parseInt(b.vintage) || 0) - (parseInt(a.vintage) || 0);
+      case 'name':         return (a.name || '').localeCompare(b.name || '');
+      case 'country':      return (a.country || '').localeCompare(b.country || '');
+      default: return 0;
+    }
+  });
+  return wines;
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function renderGrid() {
+  const wines = getFiltered();
+  const grid  = document.getElementById('wine-grid');
+  const empty = document.getElementById('empty-msg');
+  const label = document.getElementById('grid-label');
+
+  label.textContent = `${wines.length} bottle${wines.length !== 1 ? 's' : ''} shown`;
+  grid.innerHTML = '';
+
+  if (!wines.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  wines.forEach(w => {
+    const statusClass = (w.status || '').toLowerCase().replace(' ', '-');
+    const drinkNow    = w.status === 'Drink Now';
+    const isPeak      = w.status === 'Peak';
+    const drinkRange  = w.drink_from && w.drink_by
+      ? `${w.drink_from} – ${w.drink_by}`
+      : (w.drink_from || w.drink_by || 'N/A');
+    const valueMid    = w.value_mid ? `$${Math.round(w.value_mid)}` : '—';
+    const valueRange  = w.value_low && w.value_high ? `$${w.value_low}–$${w.value_high}` : '';
+
+    const card = document.createElement('div');
+    card.className = 'wine-card';
+    card.innerHTML = `
+      <div class="card-top ${statusClass}"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <div class="wine-name">
+            ${escHtml(w.name || 'Unknown Wine')}
+            ${w.classification ? `<span class="classification">${escHtml(w.classification)}</span>` : ''}
+          </div>
+          <div class="status-badge ${statusClass}">${escHtml(w.status || '')}</div>
+        </div>
+        <div class="producer">${escHtml(w.producer || '')}</div>
+        <div class="meta-row">
+          ${w.vintage ? `<div class="meta-tag"><strong>${escHtml(w.vintage)}</strong></div>` : ''}
+          ${w.variety ? `<div class="meta-tag">${escHtml(w.variety)}</div>` : ''}
+          ${w.region  ? `<div class="meta-tag">${escHtml(w.region)}</div>` : ''}
+          ${w.country ? `<div class="meta-tag">${escHtml(w.country)}</div>` : ''}
+        </div>
+        <hr class="card-divider">
+        <div class="card-footer">
+          <div class="value-block">
+            <div class="label">Est. Value</div>
+            <div class="amount">${valueMid}</div>
+            ${valueRange ? `<div class="range">${valueRange}</div>` : ''}
+          </div>
+          <div class="drink-block">
+            <div class="label">Drink Window</div>
+            <div class="window ${drinkNow || isPeak ? 'urgent' : ''}">${drinkRange}</div>
+          </div>
+        </div>
+        ${w.notes ? `<div class="notes-row">${escHtml(w.notes)}</div>` : ''}
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Event listeners ───────────────────────────────────────────────────────────
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.status;
+    renderGrid();
+  });
+});
+
+document.getElementById('sort-select').addEventListener('change', e => {
+  activeSort = e.target.value;
+  renderGrid();
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderGrid();
+});
+
+loadWines();
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seed Wine Cellar Database</title>
+<style>
+  body { font-family: Georgia, serif; background: #0f0a0a; color: #f0e6d8; max-width: 700px; margin: 0 auto; padding: 2rem; }
+  h1 { color: #c9a84c; margin-bottom: .5rem; }
+  p  { color: #9e8070; margin-bottom: 1.5rem; }
+  button {
+    background: #722f37; color: #f5e6cc; border: none;
+    padding: .9rem 2rem; border-radius: 8px; font-size: 1rem;
+    cursor: pointer; font-family: Georgia, serif;
+    transition: background .2s;
+  }
+  button:hover { background: #9c3f4a; }
+  button:disabled { background: #333; cursor: not-allowed; }
+  #log { margin-top: 1.5rem; background: #1c1210; border: 1px solid #4a2e28; border-radius: 8px; padding: 1rem; max-height: 500px; overflow-y: auto; font-size: .85rem; font-family: monospace; }
+  .log-ok   { color: #6aff9e; }
+  .log-skip { color: #f0c050; }
+  .log-err  { color: #ff6b6b; }
+  .log-info { color: #9e8070; }
+  #summary  { margin-top: 1rem; padding: 1rem; background: #1c1210; border: 1px solid #c9a84c; border-radius: 8px; display: none; }
+</style>
+</head>
+<body>
+<h1>🍷 Wine Cellar — Database Seeder</h1>
+<p>This page loads all 26 wines into your Firestore database. Open this page once, click the button, and you're done. It will skip wines that already exist.</p>
+<button id="btn" onclick="seedDatabase()">Seed Firestore Database</button>
+<div id="log"></div>
+<div id="summary"></div>
+
+<script type="module">
+import { initializeApp }           from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, getDocs, query, where }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBhmmAgAuBZ4mqjEr5CTolfbrPqK36s-aY",
+  authDomain: "dans-wine-cellar.firebaseapp.com",
+  projectId: "dans-wine-cellar",
+  storageBucket: "dans-wine-cellar.firebasestorage.app",
+  messagingSenderId: "30676784937",
+  appId: "1:30676784937:web:a66f880457ce864de90938"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const WINES = [
+  { name:"Bottle Poetry Pinot Noir",          producer:"Bottle Poetry",               vintage:"NV",   variety:"Pinot Noir",               region:"California",                   country:"USA",       classification:"",                 value_low:8,   value_high:12,  value_mid:10,   drink_from:"Now",  drink_by:"2027", status:"Drink Now", notes:"Entry-level everyday wine" },
+  { name:"Prestige de Mireval Cab Sauv",       producer:"Prestige de Mireval",         vintage:"2024", variety:"Cabernet Sauvignon",        region:"South-West France",            country:"France",    classification:"",                 value_low:10,  value_high:18,  value_mid:14,   drink_from:"2026", drink_by:"2029", status:"Hold",      notes:"Very young; needs 1-2 years to settle" },
+  { name:"Capital Zinfandel",                  producer:"Capital",                     vintage:"NV",   variety:"Zinfandel",                 region:"California",                   country:"USA",       classification:"",                 value_low:12,  value_high:20,  value_mid:16,   drink_from:"Now",  drink_by:"2027", status:"Drink Now", notes:"Bold, fruit-forward; enjoy young" },
+  { name:"Château Guyon La Roseraie",          producer:"Château Guyon",               vintage:"2022", variety:"Bordeaux Blend",            region:"Bordeaux",                     country:"France",    classification:"3x Gold Medal",    value_low:20,  value_high:35,  value_mid:27.5, drink_from:"2026", drink_by:"2032", status:"Hold",      notes:"3x Gold Medal Winner — let it age" },
+  { name:"Pagos de Tahola Rioja",              producer:"Bodegas Larchago / Chavarri", vintage:"2023", variety:"Tempranillo Blend",         region:"Rioja DOCa",                   country:"Spain",     classification:"DOCa",             value_low:15,  value_high:25,  value_mid:20,   drink_from:"2026", drink_by:"2031", status:"Hold",      notes:"Young Rioja; hold 1-2 years minimum" },
+  { name:"Château Paloma",                     producer:"Château Paloma",              vintage:"2020", variety:"Bordeaux Blend",            region:"Bordeaux",                     country:"France",    classification:"",                 value_low:30,  value_high:50,  value_mid:40,   drink_from:"2025", drink_by:"2031", status:"Hold",      notes:"French Bordeaux; 14.5% ABV" },
+  { name:"Rubrica",                            producer:"Rubrica",                     vintage:"2020", variety:"Aragonez / Alicante Bousc.", region:"Alentejano",                   country:"Portugal",  classification:"VR",               value_low:18,  value_high:28,  value_mid:23,   drink_from:"Now",  drink_by:"2027", status:"Drink Now", notes:"Approachable Portuguese red" },
+  { name:"Harvey & Harriet",                   producer:"Booker Vineyard (E. Jensen)", vintage:"2021", variety:"Red Blend",                 region:"San Luis Obispo County",       country:"USA",       classification:"",                 value_low:65,  value_high:90,  value_mid:77.5, drink_from:"2025", drink_by:"2032", status:"Hold",      notes:"Premium label; small production Booker Vineyard" },
+  { name:"Conn Creek AVA Series",              producer:"Conn Creek Winery",           vintage:"2019", variety:"Cabernet Sauvignon",        region:"Spring Mountain, Napa Valley", country:"USA",       classification:"AVA Series",       value_low:45,  value_high:65,  value_mid:55,   drink_from:"2025", drink_by:"2033", status:"Hold",      notes:"Excellent 2019 Napa vintage; don't rush" },
+  { name:"TJ's Gran Reserva Red Blend",        producer:"Trader Joe's (Chile source)", vintage:"2022", variety:"Cab/Syrah/PV/Carm Blend",  region:"Cachapoal Valley",             country:"Chile",     classification:"Gran Reserva",     value_low:8,   value_high:12,  value_mid:10,   drink_from:"Now",  drink_by:"2026", status:"Drink Now", notes:"71% Cab, 21% Syrah; outstanding QPR" },
+  { name:"Dolum Estates Cask #28",             producer:"Dolum Estates",               vintage:"2021", variety:"Cabernet Sauvignon",        region:"Napa Valley",                  country:"USA",       classification:"Cask #28",         value_low:50,  value_high:80,  value_mid:65,   drink_from:"2025", drink_by:"2033", status:"Hold",      notes:"Small-production Napa Cab" },
+  { name:"Hawk & Horse Cab Franc",             producer:"Hawk and Horse Vineyards",    vintage:"2019", variety:"Cabernet Franc",            region:"Red Hills, Lake County",       country:"USA",       classification:"",                 value_low:40,  value_high:60,  value_mid:50,   drink_from:"2025", drink_by:"2030", status:"Hold",      notes:"Rare varietal Cab Franc; well-regarded" },
+  { name:"Young Ridge Premium Estate",         producer:"Young Ridge",                 vintage:"2011", variety:"Cabernet Sauvignon",        region:"Napa Valley",                  country:"USA",       classification:"Premium Estate",    value_low:35,  value_high:55,  value_mid:45,   drink_from:"Now",  drink_by:"2026", status:"Drink Now", notes:"⚠ 14-yr-old Napa Cab — open ASAP" },
+  { name:"Excelso Gran Reserva",               producer:"AGE Bodegas / Campo Viejo",   vintage:"2012", variety:"Tempranillo Blend",         region:"Rioja DOCa",                   country:"Spain",     classification:"Gran Reserva",     value_low:20,  value_high:35,  value_mid:27.5, drink_from:"Now",  drink_by:"2028", status:"Peak",      notes:"2012 Rioja — beautiful window RIGHT NOW" },
+  { name:"Shannon Ridge Home Ranch",           producer:"Shannon Ridge Winery",        vintage:"2020", variety:"Red Blend",                 region:"Lake County",                  country:"USA",       classification:"Appellation Series",value_low:20,  value_high:30,  value_mid:25,   drink_from:"Now",  drink_by:"2027", status:"Drink Now", notes:"Sustainable family winery" },
+  { name:"3 Rein 'Never Tame' Red Blend",      producer:"3 Rein Wines",                vintage:"2021", variety:"Red Blend",                 region:"Columbia Valley",              country:"USA",       classification:"",                 value_low:15,  value_high:25,  value_mid:20,   drink_from:"Now",  drink_by:"2027", status:"Drink Now", notes:"13.5% ABV; drink young" },
+  { name:"Topel Gustafson Vineyard Syrah",     producer:"Topel Winery",                vintage:"2022", variety:"Syrah",                     region:"Dry Creek Valley",             country:"USA",       classification:"Single Vineyard",  value_low:40,  value_high:60,  value_mid:50,   drink_from:"2026", drink_by:"2032", status:"Hold",      notes:"High-elevation; needs more time" },
+  { name:"Paro Pinot Noir",                    producer:"Paro Wines",                  vintage:"2018", variety:"Pinot Noir",                region:"Russian River Valley",         country:"USA",       classification:"",                 value_low:45,  value_high:70,  value_mid:57.5, drink_from:"Now",  drink_by:"2028", status:"Peak",      notes:"Right in the sweet spot now" },
+  { name:"Barbaresco DOCG",                    producer:"Gemma (Piedmont)",            vintage:"2018", variety:"Nebbiolo",                  region:"Barbaresco, Piedmont",         country:"Italy",     classification:"DOCG",             value_low:25,  value_high:40,  value_mid:32.5, drink_from:"2026", drink_by:"2035", status:"Hold",      notes:"⭐ Hold — Nebbiolo needs time; do not rush" },
+  { name:"Method Cabernet Sauvignon",          producer:"Method Wines",                vintage:"2022", variety:"Cabernet Sauvignon",        region:"California",                   country:"USA",       classification:"",                 value_low:18,  value_high:28,  value_mid:23,   drink_from:"2025", drink_by:"2028", status:"Hold",      notes:"Newer California label" },
+  { name:"Aluado Alicante Bouschet",           producer:"Aluado",                      vintage:"2023", variety:"Alicante Bouschet",         region:"Alentejo",                     country:"Portugal",  classification:"",                 value_low:15,  value_high:25,  value_mid:20,   drink_from:"2025", drink_by:"2029", status:"Hold",      notes:"Very young; deep inky style" },
+  { name:"Dark Corner Durif Shiraz",           producer:"Dark Corner",                 vintage:"2024", variety:"Durif / Shiraz",            region:"South Eastern Australia",      country:"Australia", classification:"",                 value_low:12,  value_high:18,  value_mid:15,   drink_from:"2026", drink_by:"2030", status:"Hold",      notes:"Very young bold blend; give it time" },
+  { name:"Waypoint Bell Road Vineyard",        producer:"Waypoint Single Vineyard",    vintage:"2019", variety:"Red Blend",                 region:"California",                   country:"USA",       classification:"Single Vineyard",  value_low:45,  value_high:70,  value_mid:57.5, drink_from:"Now",  drink_by:"2028", status:"Peak",      notes:"72 bottles produced; extremely rare" },
+  { name:"Woodbridge Cabernet Sauvignon",      producer:"Robert Mondavi / Woodbridge", vintage:"2012", variety:"Cabernet Sauvignon",        region:"California",                   country:"USA",       classification:"",                 value_low:10,  value_high:15,  value_mid:12.5, drink_from:"Now",  drink_by:"2026", status:"Drink Now", notes:"⚠ 14-yr entry-level Cab — open immediately" },
+  { name:"Mount Langi Ghiran Heathcote Shiraz",producer:"Mount Langi Ghiran",          vintage:"2020", variety:"Shiraz",                    region:"Heathcote, Victoria",          country:"Australia", classification:"",                 value_low:35,  value_high:55,  value_mid:45,   drink_from:"2025", drink_by:"2032", status:"Hold",      notes:"Top cool-climate Aussie Shiraz producer" },
+  { name:"Kirkland Signature Red Blend",       producer:"Kirkland (Costco)",           vintage:"2023", variety:"Red Blend",                 region:"California",                   country:"USA",       classification:"",                 value_low:8,   value_high:12,  value_mid:10,   drink_from:"Now",  drink_by:"2027", status:"Drink Now", notes:"Excellent QPR Costco label" },
+];
+
+function log(msg, type='info') {
+  const el = document.getElementById('log');
+  const line = document.createElement('div');
+  line.className = `log-${type}`;
+  line.textContent = msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+window.seedDatabase = async function() {
+  const btn = document.getElementById('btn');
+  btn.disabled = true;
+  btn.textContent = 'Seeding…';
+  document.getElementById('log').innerHTML = '';
+
+  log('🍷 Starting Wine Cellar Database Seed…', 'info');
+  log(`   ${WINES.length} wines to process`, 'info');
+  log('', 'info');
+
+  let added = 0, skipped = 0, errors = 0;
+  const winesRef = collection(db, 'wines');
+
+  for (const wine of WINES) {
+    try {
+      const existing = await getDocs(query(winesRef, where('name','==',wine.name), where('vintage','==',wine.vintage)));
+      if (!existing.empty) {
+        log(`⟳  SKIP   ${wine.name} (${wine.vintage}) — already exists`, 'skip');
+        skipped++;
+      } else {
+        await addDoc(winesRef, { ...wine, added_date: new Date().toISOString().slice(0,10), last_updated: new Date().toISOString().slice(0,10) });
+        log(`✓  ADDED  ${wine.name} (${wine.vintage})`, 'ok');
+        added++;
+      }
+    } catch(e) {
+      log(`✗  ERROR  ${wine.name}: ${e.message}`, 'err');
+      errors++;
+    }
+  }
+
+  log('', 'info');
+  log(`─────────────────────────────────`, 'info');
+  log(`✓ Added: ${added}   ⟳ Skipped: ${skipped}   ✗ Errors: ${errors}`, added > 0 ? 'ok' : 'info');
+
+  const summary = document.getElementById('summary');
+  summary.style.display = 'block';
+  summary.innerHTML = errors === 0
+    ? `<p style="color:#6aff9e;margin:0">✅ Seed complete! <a href="index.html" style="color:#c9a84c">→ Go to your Wine Cellar</a></p>`
+    : `<p style="color:#ff6b6b;margin:0">⚠ Completed with ${errors} error(s). Check Firestore rules if writes are failing.</p>`;
+
+  btn.textContent = 'Done';
+};
+</script>
+</body>
+</html>
