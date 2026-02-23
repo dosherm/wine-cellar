@@ -4,190 +4,443 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dan's Wine Cellar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0a0a;
-    --surface: #1c1210;
-    --surface2: #261815;
-    --card: #2a1c19;
-    --border: #4a2e28;
-    --burgundy: #722f37;
-    --gold: #c9a84c;
-    --gold-light: #f0d080;
-    --cream: #f5e6cc;
-    --text: #f0e6d8;
-    --muted: #9e8070;
-    --drink-now-bg: #3d1515;
-    --drink-now: #ff6b6b;
-    --peak-bg: #2d2510;
-    --peak: #f0c050;
-    --hold-bg: #0f1e35;
-    --hold: #6aabff;
+    --bg:          #0b201f;
+    --surface:     #0e2826;
+    --card:        #112b29;
+    --card-hover:  #143330;
+    --border:      #2b4e44;
+    --border-soft: #1e3d38;
+    --mint:        #8cfcba;
+    --lime:        #c4e456;
+    --pink:        #eb316f;
+    --cream:       #f6f9f2;
+    --text:        #e8f2ee;
+    --muted:       #5d8a7e;
+    --muted2:      #3d6b62;
+    --drink-now:   #eb316f;
+    --peak:        #c4e456;
+    --hold:        #8cfcba;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-  /* ─── TOP BAR ─── */
-  header {
-    background: linear-gradient(135deg, #1c0a0a 0%, #2c1010 50%, #1c0a0a 100%);
-    border-bottom: 2px solid var(--burgundy);
-    padding: 0 2rem;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
-  .header-inner { max-width: 1400px; margin: auto; display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 1rem; }
-  .logo { display: flex; align-items: center; gap: .7rem; }
-  .logo-icon { font-size: 1.8rem; }
-  .logo-text h1 { font-size: 1.3rem; font-weight: normal; color: var(--gold); letter-spacing: 1px; }
-  .logo-text p  { font-size: .75rem; color: var(--muted); font-style: italic; }
-  .header-stats { display: flex; gap: 1.5rem; }
-  .stat { text-align: center; }
-  .stat .val { font-size: 1.3rem; font-weight: bold; color: var(--gold); }
-  .stat .lbl { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ─── NAV ─── */
+  header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--mint);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .logo-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--cream);
+    letter-spacing: -0.2px;
+  }
+  .nav-stats {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .nav-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .nav-stat .val {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--mint);
+    letter-spacing: -0.5px;
+  }
+  .nav-stat .lbl {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
 
   /* ─── CONTROLS ─── */
   .controls {
     background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: .9rem 2rem;
-    position: sticky; top: 68px; z-index: 99;
+    border-bottom: 1px solid var(--border-soft);
+    position: sticky;
+    top: 64px;
+    z-index: 99;
   }
-  .controls-inner { max-width: 1400px; margin: auto; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-  .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 320px; }
+  .controls-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 180px;
+    max-width: 280px;
+  }
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 13px;
+    pointer-events: none;
+  }
   .search-wrap input {
-    width: 100%; background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); padding: .55rem .55rem .55rem 2.2rem;
-    border-radius: 6px; font-size: .9rem; outline: none;
-    transition: border-color .2s;
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 12px 7px 34px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
   }
-  .search-wrap input:focus { border-color: var(--gold); }
-  .search-wrap .s-icon { position: absolute; left: .6rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .9rem; }
-  .filter-chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-wrap input:focus { border-color: var(--mint); }
+
+  .divider-v {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .chips {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
   .chip {
-    padding: .35rem .9rem; border-radius: 20px; font-size: .8rem;
-    cursor: pointer; border: 1px solid var(--border);
-    background: var(--surface2); color: var(--muted);
-    transition: all .2s; user-select: none;
-    font-family: 'Georgia', serif;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    user-select: none;
   }
-  .chip.active, .chip:hover { color: var(--text); border-color: var(--gold); background: rgba(201,168,76,.12); }
-  .chip[data-status="Drink Now"].active { background: rgba(255,107,107,.15); border-color: var(--drink-now); color: var(--drink-now); }
-  .chip[data-status="Peak"].active      { background: rgba(240,192,80,.15); border-color: var(--peak); color: var(--peak); }
-  .chip[data-status="Hold"].active      { background: rgba(106,171,255,.15); border-color: var(--hold); color: var(--hold); }
-  .sort-wrap { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
-  .sort-wrap label { font-size: .8rem; color: var(--muted); }
+  .chip:hover { border-color: var(--mint); color: var(--text); }
+  .chip.active { background: var(--mint); border-color: var(--mint); color: var(--bg); font-weight: 600; }
+  .chip[data-status="Drink Now"].active { background: var(--drink-now); border-color: var(--drink-now); color: #fff; }
+  .chip[data-status="Peak"].active      { background: var(--peak);      border-color: var(--peak);      color: var(--bg); }
+  .chip[data-status="Hold"].active      { background: var(--hold);      border-color: var(--hold);      color: var(--bg); }
+
+  .sort-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+  .sort-wrap label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+  }
   .sort-wrap select {
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); padding: .45rem .7rem;
-    border-radius: 6px; font-size: .85rem; outline: none; cursor: pointer;
-    font-family: 'Georgia', serif;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .sort-wrap select:focus { border-color: var(--mint); }
+
+  /* ─── MAIN ─── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 32px 64px;
+  }
+  .grid-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .grid-count {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
   }
 
   /* ─── GRID ─── */
-  main { max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
-  .grid-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-  .grid-info p { font-size: .85rem; color: var(--muted); font-style: italic; }
   #wine-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 1.2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
   }
 
   /* ─── CARD ─── */
   .wine-card {
     background: var(--card);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-soft);
     border-radius: 12px;
     overflow: hidden;
-    transition: transform .25s, box-shadow .25s, border-color .25s;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1),
+                box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),
+                border-color 0.25s;
     cursor: default;
-    display: flex; flex-direction: column;
   }
-  .wine-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.5); border-color: var(--gold); }
-  .card-top { height: 5px; }
-  .card-top.drink-now { background: linear-gradient(90deg, #c0392b, #ff6b6b); }
-  .card-top.peak      { background: linear-gradient(90deg, #b8860b, #f0c050); }
-  .card-top.hold      { background: linear-gradient(90deg, #1a5276, #6aabff); }
-  .card-body { padding: 1.1rem 1.2rem 1rem; flex: 1; display: flex; flex-direction: column; }
-  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .6rem; gap: .5rem; }
-  .wine-name { font-size: 1.0rem; color: var(--cream); line-height: 1.3; flex: 1; }
-  .status-badge {
-    padding: .2rem .6rem; border-radius: 10px; font-size: .7rem;
-    font-weight: bold; white-space: nowrap; flex-shrink: 0;
-    font-family: 'Georgia', serif; letter-spacing: .5px;
+  .wine-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    border-color: var(--border);
+    background: var(--card-hover);
   }
-  .status-badge.drink-now { background: rgba(255,107,107,.2); color: var(--drink-now); border: 1px solid rgba(255,107,107,.4); }
-  .status-badge.peak      { background: rgba(240,192,80,.2);  color: var(--peak);      border: 1px solid rgba(240,192,80,.4); }
-  .status-badge.hold      { background: rgba(106,171,255,.2); color: var(--hold);      border: 1px solid rgba(106,171,255,.4); }
-  .producer { font-size: .8rem; color: var(--muted); margin-bottom: .8rem; font-style: italic; }
-  .meta-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .7rem; }
-  .meta-tag {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 4px; padding: .2rem .5rem;
-    font-size: .75rem; color: var(--muted);
+
+  .card-stripe { height: 3px; }
+  .card-stripe.drink-now { background: var(--drink-now); }
+  .card-stripe.peak      { background: var(--peak); }
+  .card-stripe.hold      { background: var(--hold); }
+
+  .card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  .meta-tag strong { color: var(--text); }
-  .card-divider { border: none; border-top: 1px solid var(--border); margin: .7rem 0; }
-  .card-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
-  .value-block .label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
-  .value-block .amount { font-size: 1.1rem; color: var(--gold); font-weight: bold; }
-  .value-block .range  { font-size: .72rem; color: var(--muted); }
+
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .wine-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1.4;
+    flex: 1;
+  }
+  .badge {
+    flex-shrink: 0;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .badge.drink-now { background: rgba(235,49,111,0.15); color: var(--drink-now); border: 1px solid rgba(235,49,111,0.3); }
+  .badge.peak      { background: rgba(196,228,86,0.12); color: var(--peak);      border: 1px solid rgba(196,228,86,0.3); }
+  .badge.hold      { background: rgba(140,252,186,0.1); color: var(--hold);      border: 1px solid rgba(140,252,186,0.25); }
+
+  .producer {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: -6px;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag {
+    background: rgba(43,78,68,0.5);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .tag strong { color: var(--text); font-weight: 600; }
+  .tag.classification {
+    background: rgba(140,252,186,0.07);
+    border-color: rgba(140,252,186,0.2);
+    color: var(--mint);
+  }
+
+  .card-divider {
+    border: none;
+    border-top: 1px solid var(--border-soft);
+    margin: 0;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .value-block .lbl,
+  .drink-block .lbl {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+  .value-block .amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--mint);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .value-block .range {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
   .drink-block { text-align: right; }
-  .drink-block .label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
-  .drink-block .window { font-size: .85rem; color: var(--cream); }
-  .drink-block .window.urgent { color: var(--drink-now); font-weight: bold; }
-  .notes-row { margin-top: .7rem; font-size: .78rem; color: var(--muted); font-style: italic; line-height: 1.4; }
-  .classification { display: inline-block; background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.3); color: var(--gold); border-radius: 4px; padding: .15rem .4rem; font-size: .7rem; margin-left: .4rem; }
+  .drink-block .window {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .drink-block .window.urgent { color: var(--drink-now); font-weight: 600; }
+  .drink-block .window.peak-w { color: var(--peak); }
+
+  .notes {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-style: italic;
+  }
 
   /* ─── LOADING / EMPTY ─── */
-  #loading { text-align: center; padding: 4rem; color: var(--muted); }
-  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+  #loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 0;
+    color: var(--muted);
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 2px solid var(--border);
+    border-top-color: var(--mint);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
   @keyframes spin { to { transform: rotate(360deg); } }
-  #empty-msg { display: none; text-align: center; padding: 4rem; color: var(--muted); }
+  #loading p { font-size: 13px; }
+  #empty-msg {
+    display: none;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
 
   /* ─── RESPONSIVE ─── */
   @media (max-width: 640px) {
-    .header-stats { display: none; }
-    .controls-inner { gap: .6rem; }
+    .nav-stats { display: none; }
+    .nav-inner  { padding: 0 16px; }
+    .controls-inner { padding: 0 16px; height: auto; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
     .sort-wrap { margin-left: 0; }
-    main { padding: 1rem; }
+    main { padding: 20px 16px 48px; }
+    #wine-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
+<!-- ─── NAV ─── -->
 <header>
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-icon">🍷</div>
-      <div class="logo-text">
-        <h1>Dan's Wine Cellar</h1>
-        <p>Personal Collection</p>
+  <div class="nav-inner">
+    <a class="logo" href="#">
+      <div class="logo-dot"></div>
+      <span class="logo-label">Dan's Wine Cellar</span>
+    </a>
+    <div class="nav-stats">
+      <div class="nav-stat">
+        <span class="val" id="stat-total">—</span>
+        <span class="lbl">Bottles</span>
       </div>
-    </div>
-    <div class="header-stats">
-      <div class="stat"><div class="val" id="stat-total">—</div><div class="lbl">Bottles</div></div>
-      <div class="stat"><div class="val" id="stat-drink-now">—</div><div class="lbl">Drink Now</div></div>
-      <div class="stat"><div class="val" id="stat-value">—</div><div class="lbl">Est. Value</div></div>
+      <div class="nav-stat">
+        <span class="val" id="stat-drink-now" style="color:var(--drink-now)">—</span>
+        <span class="lbl">Drink Now</span>
+      </div>
+      <div class="nav-stat">
+        <span class="val" id="stat-value">—</span>
+        <span class="lbl">Est. Value</span>
+      </div>
     </div>
   </div>
 </header>
 
+<!-- ─── CONTROLS ─── -->
 <div class="controls">
   <div class="controls-inner">
     <div class="search-wrap">
-      <span class="s-icon">🔍</span>
+      <span class="search-icon">⌕</span>
       <input type="text" id="search" placeholder="Search wine, region, variety…">
     </div>
-    <div class="filter-chips">
+    <div class="divider-v"></div>
+    <div class="chips">
       <div class="chip active" data-status="All">All</div>
-      <div class="chip" data-status="Drink Now">🔴 Drink Now</div>
-      <div class="chip" data-status="Peak">🟡 Peak</div>
-      <div class="chip" data-status="Hold">🔵 Hold</div>
+      <div class="chip" data-status="Drink Now">Drink Now</div>
+      <div class="chip" data-status="Peak">Peak</div>
+      <div class="chip" data-status="Hold">Hold</div>
     </div>
     <div class="sort-wrap">
-      <label for="sort-select">Sort:</label>
+      <label for="sort-select">Sort</label>
       <select id="sort-select">
         <option value="urgency">Drink Urgency</option>
         <option value="value-desc">Value: High → Low</option>
@@ -201,13 +454,15 @@
   </div>
 </div>
 
+<!-- ─── MAIN ─── -->
 <main>
-  <div class="grid-info">
-    <p id="grid-label">Loading cellar…</p>
+  <div class="grid-meta">
+    <span class="grid-count" id="grid-label">Loading cellar…</span>
   </div>
-  <div id="loading"><div class="spinner"></div><p>Loading your cellar…</p></div>
-  <div id="empty-msg">🍾 No wines match your filter.</div>
-  <div id="wine-grid"></div>
+  <div id="wine-grid">
+    <div id="loading"><div class="spinner"></div><p>Loading your cellar…</p></div>
+  </div>
+  <div id="empty-msg">No wines match your filter.</div>
 </main>
 
 <script type="module">
@@ -226,12 +481,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-let allWines = [];
+let allWines    = [];
 let activeFilter = 'All';
 let activeSort   = 'urgency';
 let searchQuery  = '';
 
-// ── Load from Firestore ──────────────────────────────────────────────────────
 async function loadWines() {
   try {
     const snap = await getDocs(collection(db, 'wines'));
@@ -241,21 +495,19 @@ async function loadWines() {
     renderGrid();
   } catch (e) {
     document.getElementById('loading').innerHTML =
-      `<p style="color:#ff6b6b">⚠ Could not load cellar: ${e.message}</p>
-       <p style="color:var(--muted);margin-top:.5rem;font-size:.85rem">Make sure Firestore is seeded and rules allow reads.</p>`;
+      `<p style="color:var(--drink-now)">Could not load cellar: ${e.message}</p>
+       <p style="color:var(--muted);margin-top:8px;font-size:12px">Check Firestore rules allow reads.</p>`;
   }
 }
 
-// ── Stats ────────────────────────────────────────────────────────────────────
 function updateStats() {
   document.getElementById('stat-total').textContent = allWines.length;
-  const drinkNow = allWines.filter(w => w.status === 'Drink Now').length;
-  document.getElementById('stat-drink-now').textContent = drinkNow;
-  const totalMid = allWines.reduce((s, w) => s + (w.value_mid || 0), 0);
-  document.getElementById('stat-value').textContent = '$' + Math.round(totalMid).toLocaleString();
+  document.getElementById('stat-drink-now').textContent =
+    allWines.filter(w => w.status === 'Drink Now').length;
+  const total = allWines.reduce((s, w) => s + (w.value_mid || 0), 0);
+  document.getElementById('stat-value').textContent = '$' + Math.round(total).toLocaleString();
 }
 
-// ── Filter + Sort ────────────────────────────────────────────────────────────
 const STATUS_ORDER = { 'Drink Now': 0, 'Peak': 1, 'Hold': 2 };
 
 function getFiltered() {
@@ -283,73 +535,74 @@ function getFiltered() {
   return wines;
 }
 
-// ── Render ───────────────────────────────────────────────────────────────────
 function renderGrid() {
   const wines = getFiltered();
   const grid  = document.getElementById('wine-grid');
   const empty = document.getElementById('empty-msg');
   const label = document.getElementById('grid-label');
 
-  label.textContent = `${wines.length} bottle${wines.length !== 1 ? 's' : ''} shown`;
+  label.textContent = `${wines.length} bottle${wines.length !== 1 ? 's' : ''}`;
   grid.innerHTML = '';
 
-  if (!wines.length) { empty.style.display = 'block'; return; }
+  if (!wines.length) {
+    empty.style.display = 'block';
+    return;
+  }
   empty.style.display = 'none';
 
   wines.forEach(w => {
-    const statusClass = (w.status || '').toLowerCase().replace(' ', '-');
-    const drinkNow    = w.status === 'Drink Now';
-    const isPeak      = w.status === 'Peak';
-    const drinkRange  = w.drink_from && w.drink_by
+    const sc       = (w.status || '').toLowerCase().replace(' ', '-');
+    const drinkNow = w.status === 'Drink Now';
+    const isPeak   = w.status === 'Peak';
+    const drinkRange = w.drink_from && w.drink_by
       ? `${w.drink_from} – ${w.drink_by}`
-      : (w.drink_from || w.drink_by || 'N/A');
-    const valueMid    = w.value_mid ? `$${Math.round(w.value_mid)}` : '—';
-    const valueRange  = w.value_low && w.value_high ? `$${w.value_low}–$${w.value_high}` : '';
+      : (w.drink_from || w.drink_by || '—');
+    const valueMid  = w.value_mid ? `$${Math.round(w.value_mid)}` : '—';
+    const valueRange = w.value_low && w.value_high ? `$${w.value_low}–$${w.value_high}` : '';
+
+    const windowClass = drinkNow ? 'urgent' : isPeak ? 'peak-w' : '';
 
     const card = document.createElement('div');
     card.className = 'wine-card';
     card.innerHTML = `
-      <div class="card-top ${statusClass}"></div>
+      <div class="card-stripe ${sc}"></div>
       <div class="card-body">
-        <div class="card-header">
-          <div class="wine-name">
-            ${escHtml(w.name || 'Unknown Wine')}
-            ${w.classification ? `<span class="classification">${escHtml(w.classification)}</span>` : ''}
-          </div>
-          <div class="status-badge ${statusClass}">${escHtml(w.status || '')}</div>
+        <div class="card-head">
+          <div class="wine-name">${esc(w.name || 'Unknown Wine')}</div>
+          <div class="badge ${sc}">${esc(w.status || '')}</div>
         </div>
-        <div class="producer">${escHtml(w.producer || '')}</div>
-        <div class="meta-row">
-          ${w.vintage ? `<div class="meta-tag"><strong>${escHtml(w.vintage)}</strong></div>` : ''}
-          ${w.variety ? `<div class="meta-tag">${escHtml(w.variety)}</div>` : ''}
-          ${w.region  ? `<div class="meta-tag">${escHtml(w.region)}</div>` : ''}
-          ${w.country ? `<div class="meta-tag">${escHtml(w.country)}</div>` : ''}
+        <div class="producer">${esc(w.producer || '')}</div>
+        <div class="tags">
+          ${w.vintage ? `<div class="tag"><strong>${esc(w.vintage)}</strong></div>` : ''}
+          ${w.variety ? `<div class="tag">${esc(w.variety)}</div>` : ''}
+          ${w.region  ? `<div class="tag">${esc(w.region)}</div>` : ''}
+          ${w.country ? `<div class="tag">${esc(w.country)}</div>` : ''}
+          ${w.classification ? `<div class="tag classification">${esc(w.classification)}</div>` : ''}
         </div>
         <hr class="card-divider">
         <div class="card-footer">
           <div class="value-block">
-            <div class="label">Est. Value</div>
+            <div class="lbl">Est. Value</div>
             <div class="amount">${valueMid}</div>
             ${valueRange ? `<div class="range">${valueRange}</div>` : ''}
           </div>
           <div class="drink-block">
-            <div class="label">Drink Window</div>
-            <div class="window ${drinkNow || isPeak ? 'urgent' : ''}">${drinkRange}</div>
+            <div class="lbl">Drink Window</div>
+            <div class="window ${windowClass}">${drinkRange}</div>
           </div>
         </div>
-        ${w.notes ? `<div class="notes-row">${escHtml(w.notes)}</div>` : ''}
+        ${w.notes ? `<div class="notes">${esc(w.notes)}</div>` : ''}
       </div>`;
     grid.appendChild(card);
   });
 }
 
-function escHtml(s) {
+function esc(s) {
   return String(s)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Event listeners ───────────────────────────────────────────────────────────
 document.querySelectorAll('.chip').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
