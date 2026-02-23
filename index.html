@@ -9,27 +9,40 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:          #0b201f;
-    --surface:     #0e2826;
-    --card:        #112b29;
-    --card-hover:  #143330;
-    --border:      #2b4e44;
-    --border-soft: #1e3d38;
-    --mint:        #8cfcba;
-    --lime:        #c4e456;
-    --pink:        #eb316f;
-    --cream:       #f6f9f2;
-    --text:        #e8f2ee;
-    --muted:       #5d8a7e;
-    --muted2:      #3d6b62;
-    --drink-now:   #eb316f;
-    --peak:        #c4e456;
-    --hold:        #8cfcba;
+    --bg:        #f5f5f2;
+    --surface:   #ffffff;
+    --card:      #ffffff;
+    --border:    #e2e2de;
+    --border-md: #c8c8c4;
+    --text:      #111111;
+    --text-2:    #444444;
+    --muted:     #888880;
+    --shadow:    0 1px 3px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+
+    /* Status — readable on white */
+    --drink-now-text: #b91c1c;
+    --drink-now-bg:   #fef2f2;
+    --drink-now-bd:   #fca5a5;
+    --drink-now-bar:  #dc2626;
+
+    --peak-text:  #92400e;
+    --peak-bg:    #fffbeb;
+    --peak-bd:    #fcd34d;
+    --peak-bar:   #d97706;
+
+    --hold-text:  #1e40af;
+    --hold-bg:    #eff6ff;
+    --hold-bd:    #93c5fd;
+    --hold-bar:   #2563eb;
+
+    --accent:     #111111;
+    --accent-inv: #ffffff;
   }
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -38,7 +51,7 @@
 
   /* ─── NAV ─── */
   header {
-    background: var(--bg);
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
     position: sticky; top: 0; z-index: 100;
   }
@@ -58,70 +71,64 @@
     gap: 10px;
     text-decoration: none;
   }
-  .logo-dot {
-    width: 8px; height: 8px;
-    background: var(--mint);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+  .logo-icon { font-size: 20px; line-height: 1; }
   .logo-label {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--cream);
-    letter-spacing: -0.2px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
   }
   .nav-right {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 28px;
   }
   .nav-stats {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
   }
   .nav-stat {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: 5px;
   }
   .nav-stat .val {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
-    color: var(--mint);
-    letter-spacing: -0.5px;
+    color: var(--text);
   }
+  .nav-stat .val.urgent { color: var(--drink-now-text); }
   .nav-stat .lbl {
     font-size: 11px;
     font-weight: 500;
     color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.6px;
   }
   .btn-add {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: var(--mint);
-    color: var(--bg);
+    background: var(--accent);
+    color: var(--accent-inv);
     border: none;
-    border-radius: 7px;
-    padding: 8px 16px;
+    border-radius: 6px;
+    padding: 9px 18px;
     font-size: 13px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s;
+    transition: opacity 0.15s, transform 0.15s;
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .btn-add:hover { opacity: 0.88; transform: translateY(-1px); }
-  .btn-add svg { flex-shrink: 0; }
+  .btn-add:hover { opacity: 0.82; }
 
   /* ─── CONTROLS ─── */
   .controls {
     background: var(--surface);
-    border-bottom: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 64px;
     z-index: 99;
@@ -130,7 +137,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 32px;
-    height: 56px;
+    height: 52px;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -138,16 +145,16 @@
   .search-wrap {
     position: relative;
     flex: 1;
-    min-width: 180px;
-    max-width: 280px;
+    min-width: 160px;
+    max-width: 260px;
   }
   .search-icon {
     position: absolute;
-    left: 12px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--muted);
-    font-size: 13px;
+    font-size: 14px;
     pointer-events: none;
   }
   .search-wrap input {
@@ -155,15 +162,15 @@
     background: var(--bg);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 7px 12px 7px 34px;
-    border-radius: 6px;
+    padding: 7px 10px 7px 32px;
+    border-radius: 5px;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s, background 0.15s;
   }
   .search-wrap input::placeholder { color: var(--muted); }
-  .search-wrap input:focus { border-color: var(--mint); }
+  .search-wrap input:focus { border-color: var(--accent); background: var(--surface); }
 
   .divider-v {
     width: 1px;
@@ -172,11 +179,7 @@
     flex-shrink: 0;
   }
 
-  .chips {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
+  .chips { display: flex; gap: 6px; }
   .chip {
     padding: 5px 14px;
     border-radius: 20px;
@@ -185,16 +188,16 @@
     cursor: pointer;
     border: 1px solid var(--border);
     background: transparent;
-    color: var(--muted);
+    color: var(--text-2);
     font-family: 'Inter', sans-serif;
-    transition: all 0.2s;
+    transition: all 0.15s;
     user-select: none;
   }
-  .chip:hover { border-color: var(--mint); color: var(--text); }
-  .chip.active { background: var(--mint); border-color: var(--mint); color: var(--bg); font-weight: 600; }
-  .chip[data-status="Drink Now"].active { background: var(--drink-now); border-color: var(--drink-now); color: #fff; }
-  .chip[data-status="Peak"].active      { background: var(--peak);      border-color: var(--peak);      color: var(--bg); }
-  .chip[data-status="Hold"].active      { background: var(--hold);      border-color: var(--hold);      color: var(--bg); }
+  .chip:hover { border-color: var(--border-md); color: var(--text); }
+  .chip.active               { background: var(--text); border-color: var(--text); color: #fff; font-weight: 600; }
+  .chip[data-status="Drink Now"].active { background: var(--drink-now-text); border-color: var(--drink-now-text); color: #fff; }
+  .chip[data-status="Peak"].active      { background: var(--peak-bar);       border-color: var(--peak-bar);       color: #fff; }
+  .chip[data-status="Hold"].active      { background: var(--hold-bar);       border-color: var(--hold-bar);       color: #fff; }
 
   .sort-wrap {
     display: flex;
@@ -207,7 +210,7 @@
     font-weight: 500;
     color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.6px;
     white-space: nowrap;
   }
   .sort-wrap select {
@@ -215,33 +218,28 @@
     border: 1px solid var(--border);
     color: var(--text);
     padding: 6px 10px;
-    border-radius: 6px;
+    border-radius: 5px;
     font-size: 12px;
     font-family: 'Inter', sans-serif;
     outline: none;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s;
   }
-  .sort-wrap select:focus { border-color: var(--mint); }
+  .sort-wrap select:focus { border-color: var(--accent); }
 
   /* ─── MAIN ─── */
   main {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 32px 32px 64px;
+    padding: 28px 32px 64px;
   }
-  .grid-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-  }
+  .grid-meta { margin-bottom: 20px; }
   .grid-count {
     font-size: 12px;
     font-weight: 500;
     color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.6px;
   }
 
   /* ─── GRID ─── */
@@ -254,44 +252,38 @@
   /* ─── CARD ─── */
   .wine-card {
     background: var(--card);
-    border: 1px solid var(--border-soft);
-    border-radius: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1),
-                box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),
-                border-color 0.25s;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
     cursor: pointer;
     position: relative;
   }
   .wine-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
-    border-color: var(--border);
-    background: var(--card-hover);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    border-color: var(--border-md);
   }
-  .wine-card:hover .card-edit-hint {
-    opacity: 1;
-  }
+  .wine-card:hover .card-edit-hint { opacity: 1; }
   .card-edit-hint {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 12px; right: 12px;
     opacity: 0;
     transition: opacity 0.2s;
     color: var(--muted);
-    line-height: 1;
   }
   .card-edit-hint svg { display: block; }
 
-  .card-stripe { height: 3px; }
-  .card-stripe.drink-now { background: var(--drink-now); }
-  .card-stripe.peak      { background: var(--peak); }
-  .card-stripe.hold      { background: var(--hold); }
+  .card-stripe { height: 3px; flex-shrink: 0; }
+  .card-stripe.drink-now { background: var(--drink-now-bar); }
+  .card-stripe.peak      { background: var(--peak-bar); }
+  .card-stripe.hold      { background: var(--hold-bar); }
 
   .card-body {
-    padding: 20px;
+    padding: 18px 20px 20px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -308,7 +300,7 @@
   .wine-name {
     font-size: 14px;
     font-weight: 600;
-    color: var(--cream);
+    color: var(--text);
     line-height: 1.4;
     flex: 1;
   }
@@ -319,43 +311,39 @@
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
   }
-  .badge.drink-now { background: rgba(235,49,111,0.15); color: var(--drink-now); border: 1px solid rgba(235,49,111,0.3); }
-  .badge.peak      { background: rgba(196,228,86,0.12); color: var(--peak);      border: 1px solid rgba(196,228,86,0.3); }
-  .badge.hold      { background: rgba(140,252,186,0.1); color: var(--hold);      border: 1px solid rgba(140,252,186,0.25); }
+  .badge.drink-now { background: var(--drink-now-bg); color: var(--drink-now-text); border: 1px solid var(--drink-now-bd); }
+  .badge.peak      { background: var(--peak-bg);      color: var(--peak-text);      border: 1px solid var(--peak-bd); }
+  .badge.hold      { background: var(--hold-bg);      color: var(--hold-text);      border: 1px solid var(--hold-bd); }
 
   .producer {
     font-size: 12px;
     color: var(--muted);
-    font-style: italic;
     margin-top: -6px;
   }
 
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; }
   .tag {
-    background: rgba(43,78,68,0.5);
-    border: 1px solid var(--border-soft);
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 4px;
-    padding: 3px 8px;
+    padding: 2px 7px;
     font-size: 11px;
-    color: var(--muted);
+    color: var(--text-2);
   }
   .tag strong { color: var(--text); font-weight: 600; }
   .tag.classification {
-    background: rgba(140,252,186,0.07);
-    border-color: rgba(140,252,186,0.2);
-    color: var(--mint);
+    background: #f0f4ff;
+    border-color: #c7d4f8;
+    color: #2a4aaf;
+    font-weight: 500;
   }
 
   .card-divider {
     border: none;
-    border-top: 1px solid var(--border-soft);
-    margin: 0;
+    border-top: 1px solid var(--border);
   }
 
   .card-footer {
@@ -369,13 +357,13 @@
     font-weight: 600;
     color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 4px;
+    letter-spacing: 0.6px;
+    margin-bottom: 3px;
   }
   .value-block .amount {
     font-size: 20px;
     font-weight: 700;
-    color: var(--mint);
+    color: var(--text);
     letter-spacing: -0.5px;
     line-height: 1;
   }
@@ -388,16 +376,15 @@
   .drink-block .window {
     font-size: 13px;
     font-weight: 500;
-    color: var(--text);
+    color: var(--text-2);
   }
-  .drink-block .window.urgent { color: var(--drink-now); font-weight: 600; }
-  .drink-block .window.peak-w { color: var(--peak); }
+  .drink-block .window.urgent { color: var(--drink-now-text); font-weight: 600; }
+  .drink-block .window.peak-w { color: var(--peak-text); font-weight: 600; }
 
   .notes {
     font-size: 11px;
     color: var(--muted);
     line-height: 1.5;
-    font-style: italic;
   }
 
   /* ─── LOADING / EMPTY ─── */
@@ -408,15 +395,15 @@
     color: var(--muted);
   }
   .spinner {
-    width: 36px; height: 36px;
+    width: 32px; height: 32px;
     border: 2px solid var(--border);
-    border-top-color: var(--mint);
+    border-top-color: var(--text);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin: 0 auto 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  #loading p { font-size: 13px; }
+  #loading p { font-size: 13px; color: var(--muted); }
   #empty-msg {
     display: none;
     grid-column: 1 / -1;
@@ -426,20 +413,16 @@
     color: var(--muted);
   }
 
-  /* ─── DRAWER OVERLAY ─── */
+  /* ─── OVERLAY ─── */
   .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
     z-index: 200;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s;
+    transition: opacity 0.25s;
   }
-  .overlay.open {
-    opacity: 1;
-    pointer-events: all;
-  }
+  .overlay.open { opacity: 1; pointer-events: all; }
 
   /* ─── DRAWER ─── */
   .drawer {
@@ -448,48 +431,48 @@
     width: 440px;
     max-width: 100vw;
     height: 100%;
-    background: #0e2826;
+    background: var(--surface);
     border-left: 1px solid var(--border);
     z-index: 201;
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
     overflow: hidden;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.08);
   }
-  .drawer.open {
-    transform: translateX(0);
-  }
+  .drawer.open { transform: translateX(0); }
 
   .drawer-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border-soft);
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
+    background: var(--bg);
   }
   .drawer-title {
     font-size: 15px;
-    font-weight: 600;
-    color: var(--cream);
+    font-weight: 700;
+    color: var(--text);
   }
   .drawer-close {
-    width: 32px; height: 32px;
-    border-radius: 6px;
-    border: 1px solid var(--border-soft);
-    background: transparent;
+    width: 30px; height: 30px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--surface);
     color: var(--muted);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    transition: all 0.2s;
-    line-height: 1;
+    font-size: 16px;
+    transition: all 0.15s;
     font-family: 'Inter', sans-serif;
+    line-height: 1;
   }
-  .drawer-close:hover { border-color: var(--border); color: var(--text); background: rgba(255,255,255,0.04); }
+  .drawer-close:hover { color: var(--text); border-color: var(--border-md); background: var(--bg); }
 
   .drawer-body {
     flex: 1;
@@ -503,14 +486,14 @@
   .drawer-body::-webkit-scrollbar-track { background: transparent; }
   .drawer-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* ─── FORM SECTIONS ─── */
+  /* ─── FORM ─── */
   .form-section-label {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     color: var(--muted);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .form-grid {
     display: grid;
@@ -521,31 +504,29 @@
 
   .field label {
     display: block;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-bottom: 6px;
+    color: var(--text-2);
+    margin-bottom: 5px;
   }
   .field input,
   .field textarea {
     width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border-soft);
+    background: var(--surface);
+    border: 1px solid var(--border);
     color: var(--text);
     padding: 8px 10px;
-    border-radius: 6px;
+    border-radius: 5px;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s;
     -webkit-appearance: none;
   }
   .field input::placeholder,
-  .field textarea::placeholder { color: var(--muted2); font-size: 12px; }
+  .field textarea::placeholder { color: #bbbbb6; font-size: 12px; }
   .field input:focus,
-  .field textarea:focus { border-color: var(--mint); }
+  .field textarea:focus { border-color: var(--accent); }
   .field textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
   .field input[type="number"] { -moz-appearance: textfield; }
   .field input[type="number"]::-webkit-inner-spin-button { display: none; }
@@ -557,95 +538,94 @@
     gap: 8px;
   }
   .s-btn {
-    padding: 8px 4px;
+    padding: 9px 4px;
     border-radius: 6px;
-    border: 1px solid var(--border-soft);
+    border: 1px solid var(--border);
     background: var(--bg);
-    color: var(--muted);
+    color: var(--text-2);
     font-size: 12px;
     font-weight: 500;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
     text-align: center;
-    transition: all 0.18s;
-    line-height: 1.3;
+    transition: all 0.15s;
   }
-  .s-btn:hover { border-color: var(--border); color: var(--text); }
-  .s-btn[data-val="Drink Now"].active { background: rgba(235,49,111,0.15); border-color: var(--drink-now); color: var(--drink-now); font-weight: 600; }
-  .s-btn[data-val="Peak"].active      { background: rgba(196,228,86,0.12); border-color: var(--peak);      color: var(--peak);      font-weight: 600; }
-  .s-btn[data-val="Hold"].active      { background: rgba(140,252,186,0.1); border-color: var(--hold);      color: var(--hold);      font-weight: 600; }
+  .s-btn:hover { border-color: var(--border-md); color: var(--text); }
+  .s-btn[data-val="Drink Now"].active { background: var(--drink-now-bg); border-color: var(--drink-now-bd); color: var(--drink-now-text); font-weight: 600; }
+  .s-btn[data-val="Peak"].active      { background: var(--peak-bg);      border-color: var(--peak-bd);      color: var(--peak-text);      font-weight: 600; }
+  .s-btn[data-val="Hold"].active      { background: var(--hold-bg);      border-color: var(--hold-bd);      color: var(--hold-text);      font-weight: 600; }
 
   /* ─── DRAWER FOOTER ─── */
   .drawer-footer {
     padding: 16px 24px;
-    border-top: 1px solid var(--border-soft);
+    border-top: 1px solid var(--border);
     display: flex;
     gap: 8px;
     align-items: center;
     flex-shrink: 0;
-    background: #0e2826;
+    background: var(--bg);
   }
   .btn-save {
     flex: 1;
     padding: 10px;
-    border-radius: 7px;
+    border-radius: 6px;
     border: none;
-    background: var(--mint);
-    color: var(--bg);
+    background: var(--accent);
+    color: #fff;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: opacity 0.2s;
+    transition: opacity 0.15s;
   }
-  .btn-save:hover { opacity: 0.88; }
-  .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-save:hover { opacity: 0.82; }
+  .btn-save:disabled { opacity: 0.35; cursor: not-allowed; }
 
   .btn-cancel {
     padding: 10px 16px;
-    border-radius: 7px;
+    border-radius: 6px;
     border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
+    background: var(--surface);
+    color: var(--text-2);
     font-size: 13px;
     font-weight: 500;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
   }
-  .btn-cancel:hover { color: var(--text); border-color: var(--border); }
+  .btn-cancel:hover { border-color: var(--border-md); color: var(--text); }
 
   .btn-delete {
     padding: 10px 14px;
-    border-radius: 7px;
-    border: 1px solid rgba(235,49,111,0.3);
-    background: rgba(235,49,111,0.08);
-    color: var(--drink-now);
+    border-radius: 6px;
+    border: 1px solid var(--drink-now-bd);
+    background: var(--drink-now-bg);
+    color: var(--drink-now-text);
     font-size: 12px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     white-space: nowrap;
   }
-  .btn-delete:hover { background: rgba(235,49,111,0.18); border-color: var(--drink-now); }
-  .btn-delete.confirm { background: var(--drink-now); color: #fff; border-color: var(--drink-now); }
+  .btn-delete:hover { background: #fee2e2; border-color: var(--drink-now-text); }
+  .btn-delete.confirm { background: var(--drink-now-text); color: #fff; border-color: var(--drink-now-text); }
 
   /* ─── DRAWER MSG ─── */
   .drawer-msg {
     display: none;
     padding: 10px 12px;
-    border-radius: 6px;
+    border-radius: 5px;
     font-size: 12px;
     margin-top: -12px;
   }
-  .drawer-msg.ok  { background: rgba(140,252,186,0.1); border: 1px solid rgba(140,252,186,0.3); color: var(--mint); }
-  .drawer-msg.err { background: rgba(235,49,111,0.1);  border: 1px solid rgba(235,49,111,0.3);  color: var(--drink-now); }
+  .drawer-msg.ok  { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+  .drawer-msg.err { background: var(--drink-now-bg); border: 1px solid var(--drink-now-bd); color: var(--drink-now-text); }
 
   /* ─── RESPONSIVE ─── */
-  @media (max-width: 640px) {
+  @media (max-width: 680px) {
     .nav-stats { display: none; }
-    .nav-inner  { padding: 0 16px; }
+    .nav-inner { padding: 0 16px; }
     .controls-inner { padding: 0 16px; height: auto; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
     .sort-wrap { margin-left: 0; }
     main { padding: 20px 16px 48px; }
@@ -660,7 +640,7 @@
 <header>
   <div class="nav-inner">
     <a class="logo" href="#">
-      <div class="logo-dot"></div>
+      <span class="logo-icon">🍷</span>
       <span class="logo-label">Dan's Wine Cellar</span>
     </a>
     <div class="nav-right">
@@ -670,7 +650,7 @@
           <span class="lbl">Bottles</span>
         </div>
         <div class="nav-stat">
-          <span class="val" id="stat-drink-now" style="color:var(--drink-now)">—</span>
+          <span class="val urgent" id="stat-drink-now">—</span>
           <span class="lbl">Drink Now</span>
         </div>
         <div class="nav-stat">
@@ -679,8 +659,8 @@
         </div>
       </div>
       <button class="btn-add" id="btn-add-wine">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
         Add Wine
       </button>
@@ -717,7 +697,7 @@
   </div>
 </div>
 
-<!-- ─── MAIN ─── -->
+<!-- ─── MAIN ─── */
 <main>
   <div class="grid-meta">
     <span class="grid-count" id="grid-label">Loading cellar…</span>
@@ -739,8 +719,6 @@
   </div>
 
   <div class="drawer-body">
-
-    <!-- Basic info -->
     <div>
       <div class="form-section-label">Wine Details</div>
       <div class="form-grid">
@@ -775,30 +753,28 @@
       </div>
     </div>
 
-    <!-- Value -->
     <div>
       <div class="form-section-label">Value & Drinking Window</div>
       <div class="form-grid">
         <div class="field">
           <label>Value Low ($)</label>
-          <input type="number" id="f-val-low" placeholder="e.g. 45" min="0">
+          <input type="number" id="f-val-low" placeholder="45" min="0">
         </div>
         <div class="field">
           <label>Value High ($)</label>
-          <input type="number" id="f-val-high" placeholder="e.g. 70" min="0">
+          <input type="number" id="f-val-high" placeholder="70" min="0">
         </div>
         <div class="field">
           <label>Drink From</label>
-          <input type="text" id="f-drink-from" placeholder="e.g. 2026 or Now">
+          <input type="text" id="f-drink-from" placeholder="2026 or Now">
         </div>
         <div class="field">
           <label>Drink By</label>
-          <input type="text" id="f-drink-by" placeholder="e.g. 2032">
+          <input type="text" id="f-drink-by" placeholder="2032">
         </div>
       </div>
     </div>
 
-    <!-- Status -->
     <div>
       <div class="form-section-label">Status</div>
       <div class="status-toggle">
@@ -808,7 +784,6 @@
       </div>
     </div>
 
-    <!-- Notes -->
     <div>
       <div class="form-section-label">Notes</div>
       <div class="field">
@@ -816,10 +791,8 @@
       </div>
     </div>
 
-    <!-- Feedback msg -->
     <div class="drawer-msg" id="drawer-msg"></div>
-
-  </div><!-- /drawer-body -->
+  </div>
 
   <div class="drawer-footer">
     <button class="btn-delete" id="btn-delete" style="display:none">Delete</button>
@@ -851,23 +824,21 @@ let allWines     = [];
 let activeFilter = 'All';
 let activeSort   = 'urgency';
 let searchQuery  = '';
-
-// ── Drawer state ────────────────────────────────────────────────────────────
-let drawerMode   = 'add';   // 'add' | 'edit'
+let drawerMode   = 'add';
 let editingId    = null;
 let deleteConfirm = false;
 
-const overlay    = document.getElementById('overlay');
-const drawer     = document.getElementById('drawer');
+const overlay     = document.getElementById('overlay');
+const drawer      = document.getElementById('drawer');
 const drawerTitle = document.getElementById('drawer-title');
-const btnSave    = document.getElementById('btn-save');
-const btnDelete  = document.getElementById('btn-delete');
-const btnCancel  = document.getElementById('btn-cancel');
-const drawerMsg  = document.getElementById('drawer-msg');
+const btnSave     = document.getElementById('btn-save');
+const btnDelete   = document.getElementById('btn-delete');
+const btnCancel   = document.getElementById('btn-cancel');
+const drawerMsg   = document.getElementById('drawer-msg');
 
 function openDrawer(mode, wine = null) {
-  drawerMode = mode;
-  editingId  = wine ? wine.id : null;
+  drawerMode    = mode;
+  editingId     = wine ? wine.id : null;
   deleteConfirm = false;
 
   drawerTitle.textContent = mode === 'add' ? 'Add Wine' : 'Edit Wine';
@@ -877,7 +848,6 @@ function openDrawer(mode, wine = null) {
   btnDelete.classList.remove('confirm');
   hideMsg();
 
-  // Populate or clear fields
   const fields = { name:'', producer:'', vintage:'', country:'',
                    variety:'', region:'', classification:'',
                    'val-low':'', 'val-high':'', 'drink-from':'', 'drink-by':'', notes:'' };
@@ -896,13 +866,11 @@ function openDrawer(mode, wine = null) {
     fields['drink-by']    = wine.drink_by       || '';
     fields.notes          = wine.notes          || '';
   }
-
   Object.entries(fields).forEach(([k, v]) => {
     const el = document.getElementById('f-' + k);
     if (el) el.value = v;
   });
 
-  // Status
   const status = wine ? (wine.status || 'Hold') : 'Hold';
   document.querySelectorAll('.s-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.val === status);
@@ -949,7 +917,6 @@ function showMsg(text, type) {
 }
 function hideMsg() { drawerMsg.style.display = 'none'; }
 
-// ── Save (add or update) ────────────────────────────────────────────────────
 btnSave.addEventListener('click', async () => {
   const data = getFormData();
   if (!data.name) { showMsg('Wine name is required.', 'err'); return; }
@@ -984,7 +951,6 @@ btnSave.addEventListener('click', async () => {
   }
 });
 
-// ── Delete ───────────────────────────────────────────────────────────────────
 btnDelete.addEventListener('click', async () => {
   if (!deleteConfirm) {
     deleteConfirm = true;
@@ -1007,15 +973,11 @@ btnDelete.addEventListener('click', async () => {
   }
 });
 
-// Close on overlay / cancel / X
 overlay.addEventListener('click', closeDrawer);
 btnCancel.addEventListener('click', closeDrawer);
 document.getElementById('drawer-close').addEventListener('click', closeDrawer);
-
-// Add wine button
 document.getElementById('btn-add-wine').addEventListener('click', () => openDrawer('add'));
 
-// Status toggle
 document.querySelectorAll('.s-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('active'));
@@ -1023,7 +985,6 @@ document.querySelectorAll('.s-btn').forEach(btn => {
   });
 });
 
-// ── Load ─────────────────────────────────────────────────────────────────────
 async function loadWines() {
   try {
     const snap = await getDocs(collection(db, 'wines'));
@@ -1033,7 +994,7 @@ async function loadWines() {
     renderGrid();
   } catch (e) {
     document.getElementById('loading').innerHTML =
-      `<p style="color:var(--drink-now)">Could not load cellar: ${e.message}</p>
+      `<p style="color:var(--drink-now-text)">Could not load cellar: ${e.message}</p>
        <p style="color:var(--muted);margin-top:8px;font-size:12px">Check Firestore rules allow reads.</p>`;
   }
 }
@@ -1144,7 +1105,6 @@ function esc(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Controls ─────────────────────────────────────────────────────────────────
 document.querySelectorAll('.chip').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
