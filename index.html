@@ -389,7 +389,7 @@
     display: flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 6px;
     border: 1px solid var(--border); background: var(--surface);
-    color: var(--muted); cursor: pointer; font-size: 18px;
+    color: var(--muted); cursor: pointer;
     transition: all 0.15s; flex-shrink: 0;
   }
   #btn-big:hover { border-color: var(--border-md); color: var(--text); }
@@ -511,7 +511,12 @@
         </svg>
         Add Wine
       </button>
-      <button id="btn-big" title="Toggle large text">👓</button>
+      <button id="btn-big" title="Toggle large text">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="12" cy="12" rx="10" ry="6"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
       <div id="user-menu" class="hidden">
         <img id="user-avatar" src="" alt="Profile">
         <span id="user-name" style="font-size:13px;font-weight:500;color:var(--text-2);display:none"></span>
@@ -695,6 +700,7 @@ if (shareToken) {
       if (user) {
         currentUser = user;
         showApp(user);
+        loadPrefs(user);
         checkAndMigrate(user).then(() => loadWines());
       } else {
         showLoginScreen();
@@ -1173,6 +1179,25 @@ document.querySelectorAll('.chip').forEach(chip => {
 document.getElementById('sort-select').addEventListener('change', e => { activeSort = e.target.value; renderGrid(); });
 document.getElementById('search').addEventListener('input', e => { searchQuery = e.target.value; renderGrid(); });
 
+// ── User preferences ──────────────────────────────────────────────────────────
+async function loadPrefs(user) {
+  try {
+    const prefsDoc = await getDoc(doc(db, `users/${user.uid}/prefs`));
+    if (prefsDoc.exists() && prefsDoc.data().bigMode !== undefined) {
+      const on = prefsDoc.data().bigMode;
+      applyBigMode(on);
+      localStorage.setItem('bigMode', on ? '1' : '0');
+    }
+  } catch (e) { /* fall back to localStorage value already applied */ }
+}
+
+async function savePref(key, value) {
+  if (!currentUser) return;
+  try {
+    await setDoc(doc(db, `users/${currentUser.uid}/prefs`), { [key]: value }, { merge: true });
+  } catch (e) { /* silent — localStorage is the fallback */ }
+}
+
 // ── Big text mode ─────────────────────────────────────────────────────────────
 const btnBig = document.getElementById('btn-big');
 function applyBigMode(on) {
@@ -1180,12 +1205,13 @@ function applyBigMode(on) {
   btnBig.classList.toggle('active', on);
   btnBig.title = on ? 'Normal text size' : 'Large text (glasses mode)';
 }
-// Restore preference on load
+// Restore from localStorage immediately (before Firestore prefs load)
 applyBigMode(localStorage.getItem('bigMode') === '1');
 btnBig.addEventListener('click', () => {
   const next = !document.body.classList.contains('big');
   applyBigMode(next);
   localStorage.setItem('bigMode', next ? '1' : '0');
+  savePref('bigMode', next); // persist to Firestore for cross-device sync
 });
 </script>
 </body>
