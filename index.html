@@ -384,6 +384,43 @@
   #btn-copy-link:hover { border-color: var(--border-md); }
   #btn-copy-link.copied { background: #f0fdf4; border-color: #86efac; color: #166534; }
 
+  /* ─── BIG TEXT MODE ─── */
+  #btn-big {
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--muted); cursor: pointer; font-size: 18px;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  #btn-big:hover { border-color: var(--border-md); color: var(--text); }
+  #btn-big.active { background: var(--text); color: var(--accent-inv); border-color: var(--text); }
+
+  body.big #wine-grid { grid-template-columns: 1fr !important; gap: 20px; }
+  body.big .card-stripe { height: 8px; }
+  body.big .card-body { padding: 24px 24px 28px; gap: 18px; }
+  body.big .card-head { align-items: center; }
+  body.big .wine-name { font-size: 24px; line-height: 1.3; }
+  body.big .badge {
+    font-size: 15px; padding: 7px 16px; border-radius: 6px;
+    letter-spacing: 0; font-weight: 700;
+  }
+  body.big .producer { font-size: 17px; color: var(--text-2); margin-top: -4px; }
+  body.big .tags { gap: 8px; }
+  body.big .tag { font-size: 15px; padding: 5px 12px; }
+  body.big .value-block .lbl,
+  body.big .drink-block .lbl { font-size: 13px; margin-bottom: 5px; }
+  body.big .value-block .amount { font-size: 36px; }
+  body.big .value-block .range  { font-size: 15px; }
+  body.big .drink-block .window { font-size: 24px; }
+  body.big .notes { font-size: 15px; line-height: 1.7; color: var(--text-2); }
+  body.big .chip { font-size: 15px; padding: 8px 20px; border-radius: 24px; }
+  body.big .btn-add { font-size: 15px; padding: 12px 22px; border-radius: 8px; }
+  body.big .btn-share { font-size: 15px; padding: 10px 16px; }
+  body.big .nav-stat .val { font-size: 22px; }
+  body.big .nav-stat .lbl { font-size: 12px; }
+  body.big .search-wrap input { font-size: 16px; padding: 10px 10px 10px 34px; }
+  body.big .card-divider { margin: 4px 0; }
+
   /* ─── RESPONSIVE ─── */
   @media (max-width: 680px) {
     .nav-stats { display: none; }
@@ -460,8 +497,10 @@
         </svg>
         Add Wine
       </button>
+      <button id="btn-big" title="Toggle large text">👓</button>
       <div id="user-menu" class="hidden">
         <img id="user-avatar" src="" alt="Profile">
+        <span id="user-name" style="font-size:13px;font-weight:500;color:var(--text-2);display:none"></span>
         <button id="btn-signout">Sign out</button>
       </div>
     </div>
@@ -669,13 +708,30 @@ function showApp(user) {
   document.getElementById('btn-share').style.display    = 'flex';
   const menu = document.getElementById('user-menu');
   menu.classList.remove('hidden');
+
+  // Avatar
   const avatar = document.getElementById('user-avatar');
   avatar.src = user.photoURL || '';
   avatar.alt = user.displayName || 'User';
+  if (!user.photoURL) avatar.style.display = 'none';
+
+  // Show first name next to avatar on wider screens
+  const firstName = (user.displayName || '').split(' ')[0];
+  const nameEl = document.getElementById('user-name');
+  if (firstName) {
+    nameEl.textContent = firstName;
+    nameEl.style.display = '';
+  }
+
+  // Personalize logo and page title
+  const possessive = firstName ? `${firstName}'s` : 'My';
+  document.querySelector('.logo-label').textContent = `${possessive} Cellar`;
+  document.title = `${possessive} Wine Cellar`;
+
   // Reset grid loading state
   const grid = document.getElementById('wine-grid');
   if (!document.getElementById('loading')) {
-    grid.innerHTML = '<div id="loading"><div class="spinner"></div><p>Loading your cellar…</p></div>';
+    grid.innerHTML = `<div id="loading"><div class="spinner"></div><p>Loading ${possessive.toLowerCase()} cellar…</p></div>`;
   }
 }
 
@@ -1097,6 +1153,21 @@ document.querySelectorAll('.chip').forEach(chip => {
 });
 document.getElementById('sort-select').addEventListener('change', e => { activeSort = e.target.value; renderGrid(); });
 document.getElementById('search').addEventListener('input', e => { searchQuery = e.target.value; renderGrid(); });
+
+// ── Big text mode ─────────────────────────────────────────────────────────────
+const btnBig = document.getElementById('btn-big');
+function applyBigMode(on) {
+  document.body.classList.toggle('big', on);
+  btnBig.classList.toggle('active', on);
+  btnBig.title = on ? 'Normal text size' : 'Large text (glasses mode)';
+}
+// Restore preference on load
+applyBigMode(localStorage.getItem('bigMode') === '1');
+btnBig.addEventListener('click', () => {
+  const next = !document.body.classList.contains('big');
+  applyBigMode(next);
+  localStorage.setItem('bigMode', next ? '1' : '0');
+});
 </script>
 </body>
 </html>
