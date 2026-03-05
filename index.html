@@ -742,16 +742,21 @@ document.getElementById('btn-google-signin').addEventListener('click', async () 
   btn.disabled = true;
   errEl.style.display = 'none';
   try {
-    if (isMobile) {
+    // Always try popup first — works on modern iOS/Android Chrome and Safari.
+    // Only fall back to redirect if the browser actually blocks the popup.
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') {
+      btn.disabled = false; // user dismissed, no error needed
+    } else if (e.code === 'auth/popup-blocked') {
+      errEl.textContent = 'Popup blocked — redirecting to Google…';
+      errEl.style.display = 'block';
       await signInWithRedirect(auth, provider);
     } else {
-      await signInWithPopup(auth, provider);
+      btn.disabled = false;
+      errEl.textContent = `Sign-in failed: ${e.message}`;
+      errEl.style.display = 'block';
     }
-  } catch (e) {
-    btn.disabled = false;
-    errEl.textContent = e.code === 'auth/popup-closed-by-user'
-      ? 'Sign-in cancelled.' : `Sign-in failed: ${e.message}`;
-    errEl.style.display = 'block';
   }
 });
 
