@@ -9,6 +9,25 @@ Usage (Claude runs this internally):
     python wine_manager.py list
     python wine_manager.py update <doc_id> '{"status":"Drink Now",...}'
     python wine_manager.py delete <doc_id>
+
+⚠ DEPRECATION WARNING ⚠
+-----------------------
+This script uses an API key + the flat `wines` collection.
+Once Google Auth security rules are tightened, all writes (and reads)
+to the flat `wines` collection will return 403 PERMISSION_DENIED.
+
+To continue using this script after the auth migration:
+  1. GCP Console → IAM & Admin → Service Accounts → Create service account
+  2. Grant role: Cloud Datastore User
+  3. Create JSON key → download
+  4. Use `google-auth` library to obtain a Bearer token:
+       from google.oauth2 import service_account
+       creds = service_account.Credentials.from_service_account_file(
+           'key.json', scopes=['https://www.googleapis.com/auth/datastore'])
+       creds.refresh(google.auth.transport.requests.Request())
+       token = creds.token
+  5. Pass `Authorization: Bearer {token}` header instead of `?key=API_KEY`
+  6. Update all BASE_URL paths from `wines` → `users/{uid}/wines`
 """
 
 import sys, json, requests

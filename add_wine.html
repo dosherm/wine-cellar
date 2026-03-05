@@ -153,6 +153,7 @@
 <script type="module">
 import { initializeApp }          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getAuth, onAuthStateChanged }      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBhmmAgAuBZ4mqjEr5CTolfbrPqK36s-aY",
@@ -163,8 +164,20 @@ const firebaseConfig = {
   appId: "1:30676784937:web:a66f880457ce864de90938"
 };
 
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+
+// Auth guard — redirect to home if not signed in
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    location.href = 'index.html';
+  } else {
+    currentUser = user;
+  }
+});
 
 // Auto-fill from URL params (Claude generates these)
 const params = new URLSearchParams(window.location.search);
@@ -232,7 +245,7 @@ window.submitWine = async function() {
   btn.disabled = true; btn.textContent = 'Adding…';
 
   try {
-    const docRef = await addDoc(collection(db, 'wines'), wine);
+    const docRef = await addDoc(collection(db, `users/${currentUser.uid}/wines`), wine);
     showMsg(`✅ "${name}" added to your cellar! <a href="index.html" style="color:#c9a84c">→ View Cellar</a>`, 'ok');
     clearForm();
   } catch(e) {

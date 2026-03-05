@@ -25,6 +25,14 @@
 </style>
 </head>
 <body>
+
+<div style="background:#7c2d12;border:2px solid #f97316;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:.9rem;line-height:1.5">
+  <strong style="color:#fed7aa">⚠ Admin Tool — Old Collection</strong><br>
+  This page writes to the flat <code>wines</code> collection. After Google Auth rules go live,
+  this page will receive <code>PERMISSION_DENIED</code> errors. To seed a user's cellar, use the
+  per-user path <code>users/{uid}/wines</code> and authenticate first.
+</div>
+
 <h1>🍷 Wine Cellar — Database Seeder</h1>
 <p>This page loads all 26 wines into your Firestore database. Open this page once, click the button, and you're done. It will skip wines that already exist.</p>
 <button id="btn" onclick="seedDatabase()">Seed Firestore Database</button>
