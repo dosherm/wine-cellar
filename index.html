@@ -145,9 +145,11 @@
   }
   #btn-signout {
     font-size: 12px; color: var(--muted); background: none;
-    border: none; cursor: pointer; font-family: 'Inter', sans-serif; padding: 0;
+    border: 1px solid var(--border); border-radius: 5px;
+    cursor: pointer; font-family: 'Inter', sans-serif; padding: 5px 10px;
+    transition: all 0.15s;
   }
-  #btn-signout:hover { color: var(--text); }
+  #btn-signout:hover { color: var(--text); border-color: var(--border-md); }
 
   /* ─── CONTROLS ─── */
   .controls {
@@ -250,7 +252,7 @@
   .drink-block .window { font-size: 13px; font-weight: 500; color: var(--text-2); }
   .drink-block .window.urgent { color: var(--drink-now-text); font-weight: 600; }
   .drink-block .window.peak-w { color: var(--peak-text); font-weight: 600; }
-  .notes { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .notes { font-size: 13px; color: var(--text-2); line-height: 1.6; }
 
   /* ─── LOADING / EMPTY ─── */
   #loading { grid-column: 1 / -1; text-align: center; padding: 80px 0; color: var(--muted); }
@@ -384,6 +386,59 @@
   #btn-copy-link:hover { border-color: var(--border-md); }
   #btn-copy-link.copied { background: #f0fdf4; border-color: #86efac; color: #166534; }
 
+  /* ─── QUANTITY CONTROL ─── */
+  .qty-area { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .qty-area .lbl { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+  .qty-control { display: flex; align-items: center; gap: 6px; }
+  .qty-btn {
+    width: 24px; height: 24px; border-radius: 4px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--text-2); cursor: pointer; font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; font-family: 'Inter', sans-serif; line-height: 1;
+    flex-shrink: 0;
+  }
+  .qty-btn:hover { border-color: var(--border-md); color: var(--text); background: var(--surface); }
+  .qty-btn:active { transform: scale(0.92); }
+  .qty-val { font-size: 16px; font-weight: 700; color: var(--text); min-width: 22px; text-align: center; }
+
+  /* ─── MOBILE STATS STRIP ─── */
+  #mobile-stats {
+    display: none;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 10px 16px; justify-content: space-around;
+  }
+  .m-stat { text-align: center; }
+  .m-stat .val { font-size: 20px; font-weight: 700; color: var(--text); display: block; }
+  .m-stat .val.urgent { color: var(--drink-now-text); }
+  .m-stat .lbl { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ─── TOUCH EDIT HINT ─── */
+  .touch-edit-hint {
+    display: none; position: absolute; bottom: 10px; right: 10px;
+    color: var(--muted); opacity: 0.5;
+  }
+  @media (hover: none) {
+    .touch-edit-hint { display: block; }
+    .card-edit-hint  { display: none; }
+  }
+
+  /* ─── EMPTY CELLAR STATE ─── */
+  .empty-cellar {
+    grid-column: 1 / -1; text-align: center; padding: 80px 20px;
+  }
+  .empty-cellar .empty-icon { font-size: 52px; margin-bottom: 16px; }
+  .empty-cellar h3 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .empty-cellar p  { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+  .btn-add-empty {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: var(--accent-inv);
+    border: none; border-radius: 8px; padding: 12px 24px;
+    font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-add-empty:hover { opacity: 0.82; }
+
   /* ─── BIG TEXT MODE ─── */
   #btn-big {
     display: flex; align-items: center; justify-content: center;
@@ -420,6 +475,11 @@
   body.big .nav-stat .lbl { font-size: 12px; }
   body.big .search-wrap input { font-size: 16px; padding: 10px 10px 10px 34px; }
   body.big .card-divider { margin: 4px 0; }
+  body.big .qty-btn { width: 34px; height: 34px; font-size: 22px; border-radius: 6px; }
+  body.big .qty-val { font-size: 22px; min-width: 30px; }
+  body.big .qty-area .lbl { font-size: 13px; }
+  body.big .m-stat .val { font-size: 26px; }
+  body.big .m-stat .lbl { font-size: 12px; }
 
   /* Drawer in big mode */
   body.big .drawer-title { font-size: 20px; }
@@ -438,6 +498,7 @@
   /* ─── RESPONSIVE ─── */
   @media (max-width: 680px) {
     .nav-stats { display: none; }
+    #mobile-stats { display: flex; }
     .nav-inner { padding: 0 16px; }
     .controls-inner { padding: 0 16px; height: auto; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
     .sort-wrap { margin-left: 0; }
@@ -445,6 +506,7 @@
     #wine-grid { grid-template-columns: 1fr; }
     .drawer { width: 100%; }
     .btn-share span { display: none; }
+    #user-name { display: none !important; }
   }
 </style>
 </head>
@@ -512,9 +574,12 @@
         Add Wine
       </button>
       <button id="btn-big" title="Toggle large text">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="7"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <svg width="26" height="13" viewBox="0 0 40 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="10" cy="9" r="8"/>
+          <circle cx="30" cy="9" r="8"/>
+          <path d="M18 9 Q20 5 22 9"/>
+          <line x1="2" y1="4" x2="2" y2="9"/>
+          <line x1="38" y1="4" x2="38" y2="9"/>
         </svg>
       </button>
       <div id="user-menu" class="hidden">
@@ -525,6 +590,13 @@
     </div>
   </div>
 </header>
+
+<!-- ─── MOBILE STATS ─── -->
+<div id="mobile-stats">
+  <div class="m-stat"><span class="val" id="m-stat-total">—</span><span class="lbl">Bottles</span></div>
+  <div class="m-stat"><span class="val urgent" id="m-stat-drink-now">—</span><span class="lbl">Drink Now</span></div>
+  <div class="m-stat"><span class="val" id="m-stat-value">—</span><span class="lbl">Est. Value</span></div>
+</div>
 
 <!-- ─── CONTROLS ─── -->
 <div class="controls">
@@ -595,6 +667,15 @@
         <div class="field"><label>Value High ($)</label><input type="number" id="f-val-high" placeholder="70" min="0"></div>
         <div class="field"><label>Drink From</label><input type="text" id="f-drink-from" placeholder="2026 or Now"></div>
         <div class="field"><label>Drink By</label><input type="text" id="f-drink-by" placeholder="2032"></div>
+        <div class="field full">
+          <label>Quantity (bottles)</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:2px">
+            <button type="button" class="qty-btn" id="drawer-qty-minus">−</button>
+            <input type="number" id="f-quantity" min="0" max="999" value="1"
+              style="width:64px;text-align:center;font-size:16px;font-weight:700;padding:6px 4px">
+            <button type="button" class="qty-btn" id="drawer-qty-plus">+</button>
+          </div>
+        </div>
       </div>
     </div>
     <div>
@@ -952,6 +1033,7 @@ function openDrawer(mode, wine = null) {
   });
   const status = wine ? (wine.status || 'Hold') : 'Hold';
   document.querySelectorAll('.s-btn').forEach(b => b.classList.toggle('active', b.dataset.val === status));
+  document.getElementById('f-quantity').value = wine ? (wine.quantity ?? 1) : 1;
 
   overlay.classList.add('open');
   drawer.classList.add('open');
@@ -967,6 +1049,20 @@ function closeDrawer() {
 }
 
 function winesPath() { return `users/${currentUser.uid}/wines`; }
+
+async function updateQuantity(wineId, delta) {
+  const wine = allWines.find(w => w.id === wineId);
+  if (!wine) return;
+  const newQty = Math.max(0, (wine.quantity ?? 1) + delta);
+  try {
+    await updateDoc(doc(db, winesPath(), wineId), {
+      quantity: newQty, last_updated: new Date().toISOString().slice(0,10)
+    });
+    wine.quantity = newQty;
+    updateStats();
+    renderGrid();
+  } catch (e) { /* silent — no permission or offline */ }
+}
 
 function getFormData() {
   const valLow  = parseFloat(document.getElementById('f-val-low').value)  || 0;
@@ -987,6 +1083,7 @@ function getFormData() {
     drink_by:       document.getElementById('f-drink-by').value.trim(),
     status:         statusEl ? statusEl.dataset.val : 'Hold',
     notes:          document.getElementById('f-notes').value.trim(),
+    quantity:       parseInt(document.getElementById('f-quantity').value) || 1,
   };
 }
 
@@ -1064,13 +1161,30 @@ document.querySelectorAll('.s-btn').forEach(btn => {
   });
 });
 
+// Drawer quantity ±1 buttons
+document.getElementById('drawer-qty-minus').addEventListener('click', () => {
+  const el = document.getElementById('f-quantity');
+  el.value = Math.max(0, parseInt(el.value || 1) - 1);
+});
+document.getElementById('drawer-qty-plus').addEventListener('click', () => {
+  const el = document.getElementById('f-quantity');
+  el.value = parseInt(el.value || 0) + 1;
+});
+
 // ── Stats & grid ──────────────────────────────────────────────────────────────
 function updateStats() {
-  document.getElementById('stat-total').textContent = allWines.length;
-  document.getElementById('stat-drink-now').textContent =
-    allWines.filter(w => w.status === 'Drink Now').length;
-  const total = allWines.reduce((s, w) => s + (w.value_mid || 0), 0);
-  document.getElementById('stat-value').textContent = '$' + Math.round(total).toLocaleString();
+  const drinkNow = allWines.filter(w => w.status === 'Drink Now').length;
+  const value    = '$' + Math.round(allWines.reduce((s, w) => s + (w.value_mid || 0), 0)).toLocaleString();
+  document.getElementById('stat-total').textContent    = allWines.length;
+  document.getElementById('stat-drink-now').textContent = drinkNow;
+  document.getElementById('stat-value').textContent    = value;
+  // Mobile stats strip
+  const ms = document.getElementById('mobile-stats');
+  if (ms) {
+    document.getElementById('m-stat-total').textContent    = allWines.length;
+    document.getElementById('m-stat-drink-now').textContent = drinkNow;
+    document.getElementById('m-stat-value').textContent    = value;
+  }
 }
 
 const STATUS_ORDER = { 'Drink Now': 0, 'Peak': 1, 'Hold': 2 };
@@ -1108,19 +1222,36 @@ function renderGrid() {
 
   label.textContent = `${wines.length} bottle${wines.length !== 1 ? 's' : ''}`;
   grid.innerHTML = '';
-
-  if (!wines.length) { empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
+  // Empty state
+  if (!wines.length) {
+    if (!searchQuery && activeFilter === 'All') {
+      grid.innerHTML = `
+        <div class="empty-cellar">
+          <div class="empty-icon">🍷</div>
+          <h3>Your cellar is empty</h3>
+          <p>Add your first bottle to get started.</p>
+          ${!isReadOnly ? `<button class="btn-add-empty" id="btn-empty-add">+ Add Wine</button>` : ''}
+        </div>`;
+      const emptyBtn = document.getElementById('btn-empty-add');
+      if (emptyBtn) emptyBtn.addEventListener('click', () => openDrawer('add'));
+    } else {
+      empty.style.display = 'block';
+    }
+    return;
+  }
+
   wines.forEach(w => {
-    const sc        = (w.status || '').toLowerCase().replace(' ', '-');
-    const drinkNow  = w.status === 'Drink Now';
-    const isPeak    = w.status === 'Peak';
+    const sc         = (w.status || '').toLowerCase().replace(' ', '-');
+    const drinkNow   = w.status === 'Drink Now';
+    const isPeak     = w.status === 'Peak';
     const drinkRange = w.drink_from && w.drink_by
       ? `${w.drink_from} – ${w.drink_by}` : (w.drink_from || w.drink_by || '—');
     const valueMid   = w.value_mid ? `$${Math.round(w.value_mid)}` : '—';
     const valueRange = w.value_low && w.value_high ? `$${w.value_low}–$${w.value_high}` : '';
     const windowClass = drinkNow ? 'urgent' : isPeak ? 'peak-w' : '';
+    const qty        = w.quantity ?? 1;
 
     const card = document.createElement('div');
     card.className = `wine-card${isReadOnly ? '' : ' editable'}`;
@@ -1146,6 +1277,15 @@ function renderGrid() {
             <div class="amount">${valueMid}</div>
             ${valueRange ? `<div class="range">${valueRange}</div>` : ''}
           </div>
+          ${isReadOnly ? '' : `
+          <div class="qty-area">
+            <div class="lbl">Qty</div>
+            <div class="qty-control">
+              <button class="qty-btn" data-id="${w.id}" data-delta="-1" title="Remove one bottle">−</button>
+              <span class="qty-val">${qty}</span>
+              <button class="qty-btn" data-id="${w.id}" data-delta="1" title="Add one bottle">+</button>
+            </div>
+          </div>`}
           <div class="drink-block">
             <div class="lbl">Drink Window</div>
             <div class="window ${windowClass}">${drinkRange}</div>
@@ -1153,13 +1293,27 @@ function renderGrid() {
         </div>
         ${w.notes ? `<div class="notes">${esc(w.notes)}</div>` : ''}
       </div>
-      ${isReadOnly ? '' : `<div class="card-edit-hint">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
-        </svg>
-      </div>`}`;
+      ${isReadOnly ? '' : `
+        <div class="card-edit-hint">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="touch-edit-hint">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+            <path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+          </svg>
+        </div>`}`;
 
-    if (!isReadOnly) card.addEventListener('click', () => openDrawer('edit', w));
+    if (!isReadOnly) {
+      card.addEventListener('click', () => openDrawer('edit', w));
+      card.querySelectorAll('.qty-btn[data-id]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          updateQuantity(w.id, parseInt(btn.dataset.delta));
+        });
+      });
+    }
     grid.appendChild(card);
   });
 }
